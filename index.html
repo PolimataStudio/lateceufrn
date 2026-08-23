@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal LATECE — Laboratório de Tecnologia Assistiva UFRN</title>
+  <meta name="description" content="Portal do Laboratório de Tecnologia Assistiva do Centro de Educação da UFRN. Promovendo inclusão e acessibilidade através da pesquisa, inovação e tecnologia assistiva.">
+  <link rel="icon" type="image/x-icon" href="./assets/images/logos/favicon.ico">
+  
+  <!-- Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://vlibras.gov.br">
+
+  <!-- Manifest -->
+  <link rel="manifest" href="./manifest.json">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="./css/variables.css">
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/layout.css">
+  <link rel="stylesheet" href="./css/utilities.css">
+  <link rel="stylesheet" href="./css/components.css">
+  <link rel="stylesheet" href="./css/accessibility.css">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://latece.ufrn.br/">
+  <meta property="og:title" content="Portal LATECE — Laboratório de Tecnologia Assistiva UFRN">
+  <meta property="og:description" content="Promovendo inclusão e acessibilidade através da pesquisa, inovação e tecnologia assistiva.">
+  <meta property="og:image" content="https://latece.ufrn.br/assets/images/logos/og-image.jpg">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Portal LATECE — Laboratório de Tecnologia Assistiva UFRN">
+  <meta name="twitter:description" content="Promovendo inclusão e acessibilidade através da pesquisa, inovação e tecnologia assistiva.">
+  <meta name="twitter:image" content="https://latece.ufrn.br/assets/images/logos/og-image.jpg">
+
+  <link rel="canonical" href="https://latece.ufrn.br/">
+
+  <!-- NOVO: carrega path.js antes dos módulos -->
+  <script src="./js/path.js"></script>
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Pular para o conteúdo</a>
+
+  <div id="app">
+    <header id="main-header"></header>
+
+    <div class="mobile-overlay" hidden></div>
+
+    <main id="main-content">
+
+      <!-- ===== HERO (HOME) ===== -->
+      <section class="hero hero-home" aria-label="Destaque principal">
+        <div class="container">
+          <div class="hero-grid">
+            <div class="hero-content" data-aos="fade-up" data-aos-delay="100">
+              <div class="hero-badge">Laboratório de Tecnologia Assistiva</div>
+              <h1 class="hero-title">
+                Tecnologia que<br>
+                <span class="hero-highlight">amplia possibilidades</span>
+              </h1>
+              <p class="hero-subtitle">Promovendo inclusão e acessibilidade através da pesquisa, inovação e formação humana.</p>
+              <div class="hero-actions">
+                <a href="./about.html" class="btn btn-primary btn-lg">Conheça o LATECE</a>
+                <a href="./equipment.html" class="btn btn-outline btn-lg">Equipamentos</a>
+              </div>
+              <div class="hero-stats">
+                <div class="stat-item">
+                  <span class="stat-number" data-target="2017">2017</span>
+                  <span class="stat-label">Fundação</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number" data-target="+20">+20</span>
+                  <span class="stat-label">Pesquisadores</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-number" data-target="+50">+50</span>
+                  <span class="stat-label">Projetos</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== MISSÃO ===== -->
+      <section class="mission section-accent section-with-decoration">
+        <div class="container">
+          <div class="mission-content">
+            <h2 class="section-title">Nossa Missão</h2>
+            <p class="mission-text">
+              Desenvolver pesquisas, práticas e recursos de Tecnologia Assistiva que favoreçam a participação de pessoas com necessidades educacionais específicas em diferentes contextos de aprendizagem e participação social.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="featured-news section-gray">
+        <div class="news-header" style="padding: 0 1rem;">
+          <h2>Últimas Notícias</h2>
+          <a href="./news.html">Ver Todas</a>
+        </div>
+        <div id="news-container">
+          <!-- carrossel sem container -->
+        </div>
+      </section>
+
+      <!-- ===== ACESSO RÁPIDO ===== -->
+      <section class="quick-access section-with-decoration">
+        <div class="container">
+          <h2 class="section-title">Acesso Rápido</h2>
+          <div class="quick-access-grid">
+            <a href="./about.html" class="quick-card">
+              <div class="quick-icon">ℹ️</div>
+              <h3 class="quick-title">Sobre o LATECE</h3>
+              <p class="quick-text">Conheça a missão, visão e objetivos do laboratório.</p>
+            </a>
+            <a href="./equipment.html" class="quick-card">
+              <div class="quick-icon">🛠️</div>
+              <h3 class="quick-title">Equipamentos</h3>
+              <p class="quick-text">Explore o acervo de tecnologias assistivas disponíveis.</p>
+            </a>
+            <a href="./publications.html" class="quick-card">
+              <div class="quick-icon">📚</div>
+              <h3 class="quick-title">Publicações</h3>
+              <p class="quick-text">Acesse artigos, teses e demais produções científicas.</p>
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer id="main-footer"></footer>
+  </div>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
