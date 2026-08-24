@@ -945,6 +945,8 @@ function injectNewsStructuredData(news) {
 function setupLanguageSelector() {
   const toggle = document.getElementById('locale-toggle');
   if (!toggle) return;
+
+  // Cria o dropdown uma vez
   const dropdown = document.createElement('div');
   dropdown.className = 'language-dropdown';
   dropdown.id = 'locale-dropdown';
@@ -961,26 +963,70 @@ function setupLanguageSelector() {
   dropdown.style.overflow = 'hidden';
   document.body.appendChild(dropdown);
 
-  const currentLocale = getLocale();
-  const flags = { pt: '🇧🇷', en: '🇺🇸' };
-  const names = { pt: 'Português', en: 'English' };
+  // Função para atualizar o conteúdo do dropdown baseado no idioma atual
+  function renderDropdown() {
+    const currentLocale = getLocale();
+    const flags = { pt: '🇧🇷', en: '🇺🇸' };
+    const names = { pt: 'Português', en: 'English' };
+    dropdown.innerHTML = `
+      <ul class="language-list">
+        <li>
+          <button class="language-option ${currentLocale === 'pt' ? 'is-active' : ''}" data-locale="pt" role="menuitem">
+            <span class="flag">🇧🇷</span>
+            <span>Português</span>
+          </button>
+        </li>
+        <li>
+          <button class="language-option ${currentLocale === 'en' ? 'is-active' : ''}" data-locale="en" role="menuitem">
+            <span class="flag">🇺🇸</span>
+            <span>English</span>
+          </button>
+        </li>
+      </ul>
+    `;
+    // Adiciona eventos aos botões
+    dropdown.querySelectorAll('.language-option').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const locale = btn.getAttribute('data-locale');
+        if (locale && locale !== getLocale()) {
+          await setLocale(locale);
+          // Atualiza o texto do botão principal
+          toggle.querySelector('.flag').textContent = flags[locale] || '🌐';
+          toggle.querySelector('.language-name').textContent = names[locale] || locale;
+          // Recria o dropdown para refletir o novo estado ativo
+          renderDropdown();
+          // Recria header/footer para aplicar traduções nos menus
+          const header = document.getElementById('main-header');
+          const footer = document.getElementById('main-footer');
+          if (header) {
+            header.innerHTML = createHeader(false);
+            setActiveNavLink();
+            syncHeaderScrollState();
+          }
+          if (footer) footer.innerHTML = createFooter();
+          // Aplica traduções em elementos com data-i18n (já feito pelo setLocale, mas reforça)
+          document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            const translation = t(key);
+            if (translation !== key) el.textContent = translation;
+          });
+          // Recarrega a página atual para atualizar dados (ex: categorias)
+          const page = getPageFromPath();
+          if (page === 'team') loadTeamPage();
+          else if (page === 'equipment') loadEquipmentPage();
+          else if (page === 'publications') loadPublicationsPage();
+          else if (page === 'news') loadNewsPage();
+          else if (page === 'news-detail') loadNewsDetailPage();
+          closeDropdown();
+        } else {
+          closeDropdown();
+        }
+      });
+    });
+  }
 
-  dropdown.innerHTML = `
-    <ul class="language-list">
-      <li>
-        <button class="language-option ${currentLocale === 'pt' ? 'is-active' : ''}" data-locale="pt" role="menuitem">
-          <span class="flag">🇧🇷</span>
-          <span>Português</span>
-        </button>
-      </li>
-      <li>
-        <button class="language-option ${currentLocale === 'en' ? 'is-active' : ''}" data-locale="en" role="menuitem">
-          <span class="flag">🇺🇸</span>
-          <span>English</span>
-        </button>
-      </li>
-    </ul>
-  `;
+  // Renderiza o dropdown inicial
+  renderDropdown();
 
   let isOpen = false;
   function positionDropdown() {
@@ -1009,44 +1055,10 @@ function setupLanguageSelector() {
     if (isOpen) closeDropdown();
     else openDropdown();
   }
+
   toggle.addEventListener('click', toggleDropdown);
 
-  dropdown.querySelectorAll('.language-option').forEach(btn => {
-    btn.addEventListener('click', async (e) => {
-      const locale = btn.getAttribute('data-locale');
-      if (locale && locale !== getLocale()) {
-        await setLocale(locale);
-        toggle.querySelector('.flag').textContent = flags[locale] || '🌐';
-        toggle.querySelector('.language-name').textContent = names[locale] || locale;
-        const header = document.getElementById('main-header');
-        const footer = document.getElementById('main-footer');
-        if (header) {
-          header.innerHTML = createHeader(false);
-          setActiveNavLink();
-          syncHeaderScrollState();
-        }
-        if (footer) footer.innerHTML = createFooter();
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-          const key = el.getAttribute('data-i18n');
-          const translation = t(key);
-          if (translation !== key) el.textContent = translation;
-        });
-        const page = getPageFromPath();
-        if (page === 'team') loadTeamPage();
-        else if (page === 'equipment') loadEquipmentPage();
-        else if (page === 'publications') loadPublicationsPage();
-        else if (page === 'news') loadNewsPage();
-        else if (page === 'news-detail') loadNewsDetailPage();
-        closeDropdown();
-        dropdown.querySelectorAll('.language-option').forEach(opt => {
-          opt.classList.toggle('is-active', opt.getAttribute('data-locale') === locale);
-        });
-      } else {
-        closeDropdown();
-      }
-    });
-  });
-
+  // Fecha ao clicar fora
   document.addEventListener('click', (e) => {
     if (isOpen && !e.target.closest('.language-selector') && !e.target.closest('#locale-dropdown')) {
       closeDropdown();
@@ -1057,6 +1069,13 @@ function setupLanguageSelector() {
   });
   window.addEventListener('scroll', () => { if (isOpen) positionDropdown(); });
   window.addEventListener('resize', () => { if (isOpen) positionDropdown(); });
+
+  // Atualiza o texto do botão principal com o idioma atual
+  const currentLocale = getLocale();
+  const flags = { pt: '🇧🇷', en: '🇺🇸' };
+  const names = { pt: 'Português', en: 'English' };
+  toggle.querySelector('.flag').textContent = flags[currentLocale] || '🌐';
+  toggle.querySelector('.language-name').textContent = names[currentLocale] || currentLocale;
 }
 
 // ============================================
