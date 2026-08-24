@@ -311,6 +311,7 @@ function setupTeamExpansion() {
   cards.forEach((card) => {
     const btn = card.querySelector('.team-expand-btn');
     if (!btn) return;
+    // Remove listeners antigos para evitar duplicação
     const newBtn = btn.cloneNode(true);
     btn.parentNode.replaceChild(newBtn, btn);
     const freshBtn = card.querySelector('.team-expand-btn');
