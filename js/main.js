@@ -69,8 +69,10 @@ function debounce(fn, delay) {
 function updateListURL(listType, page) {
   const state = paginationState[listType];
   if (!state) return;
+  
   const params = new URLSearchParams();
   params.set('page', page);
+  
   if (listType === 'news') {
     if (state.filters.search) params.set('search', state.filters.search);
     if (state.filters.category) params.set('category', state.filters.category);
@@ -82,8 +84,12 @@ function updateListURL(listType, page) {
     if (state.filters.type) params.set('type', state.filters.type);
     if (state.filters.year) params.set('year', state.filters.year);
   }
-  const basePath = `/${listType}.html`;
-  const newUrl = basePath + (params.toString() ? '?' + params.toString() : '');
+  
+  // CORREÇÃO: usar resolvePath para garantir o subdiretório
+  const basePath = window.resolvePath(`${listType}.html`);
+  const queryString = params.toString() ? '?' + params.toString() : '';
+  const newUrl = basePath + queryString;
+  
   window.history.pushState({ page, listType, filters: state.filters }, '', newUrl);
 }
 
