@@ -37,6 +37,7 @@ function detectBrowserLocale() {
   for (const lang of langs) {
     if (lang.startsWith('pt')) return 'pt';
     if (lang.startsWith('en')) return 'en';
+    if (lang.startsWith('es')) return 'es'; // NOVO
   }
   return null;
 }
