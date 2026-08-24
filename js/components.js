@@ -2,7 +2,7 @@
  * Fábrica de componentes reutilizáveis.
  * Retorna strings HTML para injeção no DOM.
  * 
- * Versão 3.2 — Correção de placeholders (removeu public/)
+ * Versão 3.3 — Correção de caminhos de imagens usando resolvePath.
  */
 
 import { t, getLocale, setLocale } from './i18n.js';
@@ -300,18 +300,31 @@ export function createTeamCard(member, locale = 'pt') {
 /**
  * Cria um card de equipamento com suporte a download (quando disponível).
  * Estrutura esperada: { id, name, category, imageUrl, description, download: { type, url, size, version, platform, license } }
+ * 
+ * CORREÇÃO: Agora utiliza window.resolvePath para garantir caminhos absolutos das imagens.
  */
 export function createEquipmentCard(equipment) {
+  console.log('[components] Criando card para:', equipment.name, 'imageUrl:', equipment.imageUrl);
+  
   // -------------------------------------------------------------
-  // 1. TRATAMENTO DA IMAGEM
+  // 1. TRATAMENTO DA IMAGEM com resolvePath
   // -------------------------------------------------------------
   let imagePath = equipment.imageUrl || '';
+  // Remove barras iniciais
   if (imagePath.startsWith('/')) {
     imagePath = imagePath.substring(1);
   }
-  const finalImage = imagePath
-    ? `./${imagePath}`
-    : './assets/images/illustrations/placeholder-equipment.jpg'; // CORRIGIDO: removeu public/
+  
+  let finalImage;
+  if (imagePath) {
+    // Usa resolvePath para construir caminho absoluto
+    finalImage = window.resolvePath(imagePath);
+  } else {
+    // Fallback: placeholder
+    finalImage = window.resolvePath('assets/images/illustrations/placeholder-equipment.jpg');
+  }
+  
+  console.log('[components] Caminho final da imagem:', finalImage);
 
   // -------------------------------------------------------------
   // 2. CATEGORIA (traduzida)
@@ -335,7 +348,7 @@ export function createEquipmentCard(equipment) {
     if (fileUrl.startsWith('/')) {
       fileUrl = fileUrl.substring(1);
     }
-    const finalFileUrl = fileUrl ? `./${fileUrl}` : '#';
+    const finalFileUrl = fileUrl ? window.resolvePath(fileUrl) : '#';
 
     const iconMap = {
       'PDF': '📄',
@@ -372,7 +385,7 @@ export function createEquipmentCard(equipment) {
   return `
     <div class="equipment-card" data-id="${equipment.id}" role="button" tabindex="0" aria-label="${equipment.name}">
       <div class="equipment-image">
-        <img src="${finalImage}" alt="${equipment.name}" loading="lazy">
+        <img src="${finalImage}" alt="${equipment.name}" loading="lazy" onerror="this.onerror=null; this.src='${window.resolvePath('assets/images/illustrations/placeholder-equipment.jpg')}';">
       </div>
       <div class="equipment-body">
         <h3 class="equipment-name">${equipment.name}</h3>
@@ -387,12 +400,15 @@ export function createEquipmentCard(equipment) {
   `;
 }
 
+/**
+ * Cria modal de equipamento com imagem usando resolvePath.
+ */
 export function createEquipmentModal(equipment) {
   let imagePath = equipment.imageUrl || '';
   if (imagePath.startsWith('/')) {
     imagePath = imagePath.substring(1);
   }
-  const image = imagePath ? `./${imagePath}` : './assets/images/illustrations/placeholder-equipment.jpg'; // CORRIGIDO
+  const image = imagePath ? window.resolvePath(imagePath) : window.resolvePath('assets/images/illustrations/placeholder-equipment.jpg');
 
   const categoryMap = {
     'CAA': t('equipment.categories.CAA') || 'Comunicação Aumentativa e Alternativa',
@@ -408,7 +424,7 @@ export function createEquipmentModal(equipment) {
       <div class="modal-content">
         <button class="close-button" aria-label="Fechar">×</button>
         <div class="modal-image">
-          <img src="${image}" alt="${equipment.name}" loading="lazy">
+          <img src="${image}" alt="${equipment.name}" loading="lazy" onerror="this.onerror=null; this.src='${window.resolvePath('assets/images/illustrations/placeholder-equipment.jpg')}';">
         </div>
         <div class="modal-body">
           <h2 id="modal-title-${equipment.id}">${equipment.name}</h2>
@@ -500,8 +516,7 @@ export function createNewsCard(news) {
   if (imagePath.startsWith('/')) {
     imagePath = imagePath.substring(1);
   }
-  // Placeholder já está correto (sem public/)
-  const imageUrl = imagePath ? `./${imagePath}` : './assets/images/illustrations/placeholder-news.jpg';
+  const imageUrl = imagePath ? window.resolvePath(imagePath) : window.resolvePath('assets/images/illustrations/placeholder-news.jpg');
   const formattedDate = news.createdAt
     ? new Date(news.createdAt).toLocaleDateString('pt-BR', {
         year: 'numeric', month: 'long', day: 'numeric'
@@ -555,7 +570,7 @@ export function createNewsDetail(news, locale = 'pt') {
   if (imagePath.startsWith('/')) {
     imagePath = imagePath.substring(1);
   }
-  const imageUrl = imagePath ? `./${imagePath}` : './assets/images/illustrations/placeholder-news.jpg';
+  const imageUrl = imagePath ? window.resolvePath(imagePath) : window.resolvePath('assets/images/illustrations/placeholder-news.jpg');
   const isVideo = news.isVideo === true;
 
   const shareUrl = encodeURIComponent(window.location.href);
