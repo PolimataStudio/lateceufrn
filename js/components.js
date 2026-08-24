@@ -280,7 +280,7 @@ export function createTeamCard(member, locale = 'pt') {
 
   const expandBtn = hasDetails ? `
     <button class="team-expand-btn" aria-expanded="false" aria-controls="details-${member.id}">
-      <span class="icon">▼</span> Explorar
+      <span class="icon">▼</span> <span class="btn-text">Explorar</span>
     </button>
   ` : '';
 
@@ -296,7 +296,6 @@ export function createTeamCard(member, locale = 'pt') {
     </div>
   `;
 }
-
 /**
  * Cria um card de equipamento com suporte a download (quando disponível).
  * Estrutura esperada: { id, name, category, imageUrl, description, download: { type, url, size, version, platform, license } }
