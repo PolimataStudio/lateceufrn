@@ -33,7 +33,7 @@
   <link rel="canonical" href="https://latece.ufrn.br/sugestoes.html">
 
   <script src="./js/path.js"></script>
-  
+
   <style>
     /* Estilos específicos para a página de sugestões (já incluídos em components.css, mas complementares) */
     .suggestion-form .form-group {
@@ -304,6 +304,10 @@
     <footer id="main-footer"></footer>
   </div>
 
+  <!-- Carrega main.js para injetar header e footer -->
+  <script type="module" src="./js/main.js"></script>
+
+  <!-- Script do formulário (executado após main.js) -->
   <script type="module">
   import { t } from './js/i18n.js';
 
@@ -440,6 +444,6 @@
     const newUrl = window.location.pathname;
     window.history.replaceState({}, document.title, newUrl);
   }
-</script>
+  </script>
 </body>
 </html>
