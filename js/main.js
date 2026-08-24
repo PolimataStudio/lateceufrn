@@ -983,39 +983,29 @@ function setupLanguageSelector() {
         </li>
       </ul>
     `;
-    dropdown.querySelectorAll('.language-option').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
-        const locale = btn.getAttribute('data-locale');
-        if (locale && locale !== getLocale()) {
-          await setLocale(locale);
-          toggle.querySelector('.flag').textContent = flags[locale] || '🌐';
-          toggle.querySelector('.language-name').textContent = names[locale] || locale;
-          renderDropdown();
-          const header = document.getElementById('main-header');
-          const footer = document.getElementById('main-footer');
-          if (header) {
-            header.innerHTML = createHeader(false);
-            setActiveNavLink();
-            syncHeaderScrollState();
-          }
-          if (footer) footer.innerHTML = createFooter();
-          document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.getAttribute('data-i18n');
-            const translation = t(key);
-            if (translation !== key) el.textContent = translation;
-          });
-          const page = getPageFromPath();
-          if (page === 'team') loadTeamPage();
-          else if (page === 'equipment') loadEquipmentPage();
-          else if (page === 'publications') loadPublicationsPage();
-          else if (page === 'news') loadNewsPage();
-          else if (page === 'news-detail') loadNewsDetailPage();
-          closeDropdown();
-        } else {
-          closeDropdown();
-        }
-      });
-    });
+dropdown.querySelectorAll('.language-option').forEach(btn => {
+  btn.addEventListener('click', async (e) => {
+    const locale = btn.getAttribute('data-locale');
+    if (locale && locale !== getLocale()) {
+      await setLocale(locale);
+      // Atualiza o texto do botão principal
+      toggle.querySelector('.flag').textContent = flags[locale] || '🌐';
+      toggle.querySelector('.language-name').textContent = names[locale] || locale;
+      // Recria o dropdown para refletir o novo estado ativo
+      renderDropdown();
+      // Recarrega a página atual para atualizar dados (ex: categorias)
+      const page = getPageFromPath();
+      if (page === 'team') loadTeamPage();
+      else if (page === 'equipment') loadEquipmentPage();
+      else if (page === 'publications') loadPublicationsPage();
+      else if (page === 'news') loadNewsPage();
+      else if (page === 'news-detail') loadNewsDetailPage();
+      closeDropdown();
+    } else {
+      closeDropdown();
+    }
+  });
+  });
   }
 
   renderDropdown();
