@@ -1070,71 +1070,13 @@ dropdown.querySelectorAll('.language-option').forEach(btn => {
 // INICIALIZAÇÃO
 // ============================================
 
-document.addEventListener('DOMContentLoaded', async () => {
-  await initI18n();
-
-  const header = document.getElementById('main-header');
-  const footer = document.getElementById('main-footer');
-  if (header) {
-    header.innerHTML = createHeader(false);
-    setActiveNavLink();
-    syncHeaderScrollState();
+// Fallback: fechar o menu ao clicar fora dele (em qualquer lugar da página)
+document.addEventListener('click', function(e) {
+  if (isMobileMenuOpen) {
+    const menu = document.querySelector('.mobile-menu');
+    const button = document.querySelector('.mobile-menu-button');
+    if (menu && !menu.contains(e.target) && button && !button.contains(e.target)) {
+      closeMobileMenu();
+    }
   }
-  if (footer) footer.innerHTML = createFooter();
-
-  const menuButton = document.querySelector('.mobile-menu-button');
-  if (menuButton) menuButton.addEventListener('click', toggleMobileMenu);
-  document.querySelectorAll('.mobile-nav-link').forEach(link => {
-    link.addEventListener('click', closeMobileMenu);
-  });
-  const overlay = document.querySelector('.mobile-overlay');
-  if (overlay) overlay.addEventListener('click', closeMobileMenu);
-
-  window.addEventListener('scroll', handleHeaderScroll, { passive: true });
-  syncHeaderScrollState();
-
-  setupLanguageSelector();
-  initAccessibility();
-
-  document.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => closeAccessibilityPanel());
-  });
-
-  const page = getPageFromPath();
-  currentPage = page;
-
-  switch (page) {
-    case 'home':
-      await loadHomePage();
-      break;
-    case 'team':
-      await loadTeamPage();
-      break;
-    case 'equipment':
-      await loadEquipmentPage();
-      break;
-    case 'publications':
-      await loadPublicationsPage();
-      break;
-    case 'news':
-      await loadNewsPage();
-      break;
-    case 'news-detail':
-      await loadNewsDetailPage();
-      break;
-    case 'about':
-    case 'terms':
-    case 'privacy':
-    case 'credits':
-      break;
-    default:
-      console.log('Página desconhecida:', page);
-  }
-
-  initScrollReveal();
-  createBackToTop();
-  animateCounters();
-
-  window.syncHeaderScrollState = syncHeaderScrollState;
-  console.log('Portal LATECE — carregado. Página:', page);
 });
