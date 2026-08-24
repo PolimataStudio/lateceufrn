@@ -409,18 +409,23 @@
 .mobile-menu {
   position: fixed;
   top: 0;
-  left: 0;
   right: 0;
-  bottom: 0;
+  width: 320px;
+  max-width: 85vw;
+  height: 100vh;
   background: var(--color-white);
   z-index: calc(var(--z-modal-backdrop) - 1);
   overflow-y: auto;
   padding-top: 80px;
   transform: translateX(100%);
   transition: transform var(--transition-normal) cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: var(--shadow-elevated);
+  pointer-events: none; /* Impede interação quando fechado */
 }
-.mobile-menu.is-open { transform: translateX(0); }
-@media (min-width: 1024px) { .mobile-menu { display: none !important; } }
+.mobile-menu.is-open {
+  transform: translateX(0);
+  pointer-events: auto; /* Permite interação quando aberto */
+}
 
 .mobile-overlay {
   position: fixed;
