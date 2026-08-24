@@ -1,13 +1,8 @@
 /**
  * main.js — Ponto de entrada do site público
- * Com scroll reveal, microinterações, menu mobile e indicador de página ativa
- * 
- * Versão 3.1 — Utiliza resolvePath para caminhos
+ * Versão com logs detalhados para diagnosticar o carrossel.
  */
 
-// ============================================
-// IMPORTAÇÕES
-// ============================================
 import { createHeader, createFooter, createNewsCard, createCarousel, createTeamCard, createEquipmentCard, createEquipmentModal, createPublicationItem, createPublicationModal, createNewsDetail, createPagination } from './components.js';
 import { initAccessibility, closeAccessibilityPanel } from './accessibility.js';
 import { initI18n, t, getLocale, setLocale } from './i18n.js';
@@ -20,14 +15,12 @@ import { fetchNews, fetchNewsById, formatDate, getAvailableCategories } from './
 let isMobileMenuOpen = false;
 let currentPage = '';
 
-// Estados para paginação (cada lista gerencia seu próprio estado)
 const paginationState = {
   news: { page: 1, filters: { search: '', category: '' }, totalPages: 1 },
   equipment: { page: 1, filters: { search: '', category: '' }, totalPages: 1 },
   publications: { page: 1, filters: { search: '', type: '', year: '' }, totalPages: 1 }
 };
 
-// Dados completos (para filtragem local)
 let allEquipment = [];
 let allPublications = [];
 
@@ -37,8 +30,12 @@ let allPublications = [];
 
 function getPageFromPath() {
   const path = window.location.pathname;
+  console.log('[main] getPageFromPath - pathname:', path);
   const cleanPath = path.replace(/^\/public\//, '/');
-  if (cleanPath === '/' || cleanPath === '/index.html' || path === '/public/' || path === '/public/index.html') return 'home';
+  if (cleanPath === '/' || cleanPath === '/index.html' || path === '/public/' || path === '/public/index.html') {
+    console.log('[main] Página identificada: home');
+    return 'home';
+  }
   if (cleanPath.includes('/team')) return 'team';
   if (cleanPath.includes('/equipment')) return 'equipment';
   if (cleanPath.includes('/publications')) return 'publications';
@@ -48,6 +45,7 @@ function getPageFromPath() {
   if (cleanPath.includes('/termos')) return 'terms';
   if (cleanPath.includes('/politica')) return 'privacy';
   if (cleanPath.includes('/creditos')) return 'credits';
+  console.log('[main] Página desconhecida:', cleanPath);
   return 'unknown';
 }
 
@@ -59,13 +57,11 @@ function debounce(fn, delay) {
   };
 }
 
-// Atualiza a URL com os parâmetros de página e filtros para a lista atual
 function updateListURL(listType, page) {
   const state = paginationState[listType];
   if (!state) return;
   const params = new URLSearchParams();
   params.set('page', page);
-  // Adiciona filtros conforme o tipo
   if (listType === 'news') {
     if (state.filters.search) params.set('search', state.filters.search);
     if (state.filters.category) params.set('category', state.filters.category);
@@ -83,7 +79,7 @@ function updateListURL(listType, page) {
 }
 
 // ============================================
-// INDICADOR DE PÁGINA ATIVA NO MENU
+// INDICADOR DE PÁGINA ATIVA
 // ============================================
 
 function setActiveNavLink() {
@@ -323,29 +319,37 @@ function closeMobileMenu() {
 }
 
 // ============================================
-// PÁGINA: HOME
+// PÁGINA: HOME (CARROSSEL)
 // ============================================
 
 async function loadHomePage() {
+  console.log('[main] loadHomePage() iniciou.');
   const container = document.getElementById('news-container');
   if (!container) {
-    console.warn('[Home] #news-container não encontrado.');
+    console.error('[main] ❌ Elemento #news-container não encontrado no DOM!');
     return;
   }
+  console.log('[main] Container #news-container encontrado:', container);
+
   try {
-    console.log('[Home] Iniciando carregamento do carrossel...');
-    // Usa fetchNews que agora carrega do JSON local via resolvePath
+    console.log('[main] Chamando fetchNews(1, {})...');
     const result = await fetchNews(1, {});
+    console.log('[main] Resultado de fetchNews:', result);
     const news = result.news || [];
-    console.log('[Home] Notícias recebidas:', news.length);
+    console.log('[main] Notícias obtidas:', news.length, 'itens');
+
     if (news && news.length > 0) {
-      container.innerHTML = createCarousel(news);
-      console.log('[Home] Carrossel inserido com sucesso.');
+      console.log('[main] Gerando carrossel com createCarousel()...');
+      const carouselHTML = createCarousel(news);
+      console.log('[main] HTML do carrossel gerado (tamanho):', carouselHTML.length);
+      container.innerHTML = carouselHTML;
+      console.log('[main] ✅ Carrossel inserido no container.');
     } else {
+      console.warn('[main] ⚠️ Nenhuma notícia disponível para o carrossel.');
       container.innerHTML = `<p style="text-align:center;padding:2rem;color:var(--color-gray-500);">Nenhuma notícia disponível no momento.</p>`;
     }
   } catch (error) {
-    console.error('[Home] Erro ao carregar notícias:', error);
+    console.error('[main] ❌ Erro ao carregar notícias:', error);
     container.innerHTML = `<p style="text-align:center;padding:2rem;color:var(--color-gray-500);">Erro ao carregar notícias.</p>`;
   }
 }
@@ -403,7 +407,7 @@ async function loadTeamPage() {
 }
 
 // ============================================
-// PÁGINA: EQUIPAMENTOS (COM PAGINAÇÃO UNIVERSAL)
+// PÁGINA: EQUIPAMENTOS
 // ============================================
 
 async function loadEquipmentPage() {
@@ -414,30 +418,25 @@ async function loadEquipmentPage() {
     return;
   }
 
-  // Recuperar parâmetros da URL
   const params = new URLSearchParams(window.location.search);
   const page = parseInt(params.get('page')) || 1;
   const search = params.get('search') || '';
   const category = params.get('category') || '';
 
-  // Atualizar estado
   paginationState.equipment.page = page;
   paginationState.equipment.filters = { search, category };
 
-  // Sincronizar inputs de filtro
   const searchInput = document.getElementById('equipment-search');
   const categoryFilter = document.getElementById('equipment-category-filter');
   if (searchInput) searchInput.value = search;
   if (categoryFilter) categoryFilter.value = category;
 
   try {
-    // Carregar todos os dados (uma vez)
     if (allEquipment.length === 0) {
       allEquipment = await loadEquipmentData();
     }
     console.log('[Equipment] Total de itens:', allEquipment.length);
 
-    // Aplicar filtros
     let filtered = allEquipment;
     if (search) {
       const q = search.toLowerCase();
@@ -450,18 +449,15 @@ async function loadEquipmentPage() {
       filtered = filtered.filter(item => item.category === category);
     }
 
-    // Paginar (10 por página)
     const perPage = 10;
     const { items, pagination } = paginateData(filtered, page, perPage);
     paginationState.equipment.totalPages = pagination.pages;
 
-    // Renderizar
     if (items.length > 0) {
       const grid = document.createElement('div');
       grid.className = 'grid-container';
       grid.innerHTML = items.map(item => createEquipmentCard(item)).join('');
 
-      // Eventos de clique nos cards para abrir modal
       grid.querySelectorAll('.equipment-card').forEach(card => {
         card.addEventListener('click', () => {
           const id = parseInt(card.dataset.id);
@@ -482,7 +478,6 @@ async function loadEquipmentPage() {
       `;
     }
 
-    // Paginação
     if (paginationContainer) {
       if (pagination.pages > 1) {
         paginationContainer.innerHTML = createPagination(pagination.page, pagination.pages);
@@ -502,7 +497,6 @@ async function loadEquipmentPage() {
       }
     }
 
-    // Configurar filtros (busca e categoria)
     setupEquipmentFilters();
 
   } catch (error) {
@@ -560,7 +554,7 @@ function closeEquipmentModal() {
 }
 
 // ============================================
-// PÁGINA: PUBLICAÇÕES (COM PAGINAÇÃO UNIVERSAL)
+// PÁGINA: PUBLICAÇÕES
 // ============================================
 
 async function loadPublicationsPage() {
@@ -571,18 +565,15 @@ async function loadPublicationsPage() {
     return;
   }
 
-  // Recuperar parâmetros da URL
   const params = new URLSearchParams(window.location.search);
   const page = parseInt(params.get('page')) || 1;
   const search = params.get('search') || '';
   const type = params.get('type') || '';
   const year = params.get('year') || '';
 
-  // Atualizar estado
   paginationState.publications.page = page;
   paginationState.publications.filters = { search, type, year };
 
-  // Sincronizar inputs de filtro
   const searchInput = document.getElementById('publication-search');
   const typeFilter = document.getElementById('publication-type-filter');
   const yearFilter = document.getElementById('publication-year-filter');
@@ -591,13 +582,11 @@ async function loadPublicationsPage() {
   if (yearFilter) yearFilter.value = year;
 
   try {
-    // Carregar todos os dados (uma vez)
     if (allPublications.length === 0) {
       allPublications = await loadPublicationsData();
     }
     console.log('[Publications] Total de itens:', allPublications.length);
 
-    // Aplicar filtros
     let filtered = allPublications;
     if (search) {
       const q = search.toLowerCase();
@@ -614,19 +603,16 @@ async function loadPublicationsPage() {
       filtered = filtered.filter(item => item.year.toString() === year);
     }
 
-    // Paginar (10 por página)
     const perPage = 10;
     const { items, pagination } = paginateData(filtered, page, perPage);
     paginationState.publications.totalPages = pagination.pages;
 
-    // Renderizar
     const locale = getLocale();
     if (items.length > 0) {
       const grid = document.createElement('div');
       grid.className = 'publications-grid';
       grid.innerHTML = items.map(item => createPublicationItem(item, locale)).join('');
 
-      // Eventos de "Ver Detalhes"
       grid.querySelectorAll('.view-details-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -636,7 +622,6 @@ async function loadPublicationsPage() {
         });
       });
 
-      // Eventos de download
       grid.querySelectorAll('.download-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -658,7 +643,6 @@ async function loadPublicationsPage() {
       `;
     }
 
-    // Paginação
     if (paginationContainer) {
       if (pagination.pages > 1) {
         paginationContainer.innerHTML = createPagination(pagination.page, pagination.pages);
@@ -678,7 +662,6 @@ async function loadPublicationsPage() {
       }
     }
 
-    // Configurar filtros
     setupPublicationFilters();
 
   } catch (error) {
@@ -754,7 +737,7 @@ function closePublicationModal() {
 }
 
 // ============================================
-// PÁGINA: NOTÍCIAS (LISTAGEM COM PAGINAÇÃO)
+// PÁGINA: NOTÍCIAS (LISTAGEM)
 // ============================================
 
 async function loadNewsPage() {
@@ -1066,7 +1049,10 @@ function setupLanguageSelector() {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', async () => {
+  console.log('[main] DOMContentLoaded iniciado.');
+  
   await initI18n();
+  console.log('[main] i18n inicializado. Idioma:', getLocale());
 
   const header = document.getElementById('main-header');
   const footer = document.getElementById('main-footer');
@@ -1074,8 +1060,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     header.innerHTML = createHeader(false);
     setActiveNavLink();
     syncHeaderScrollState();
+    console.log('[main] Header injetado.');
+  } else {
+    console.error('[main] ❌ #main-header não encontrado!');
   }
-  if (footer) footer.innerHTML = createFooter();
+  if (footer) {
+    footer.innerHTML = createFooter();
+    console.log('[main] Footer injetado.');
+  } else {
+    console.error('[main] ❌ #main-footer não encontrado!');
+  }
 
   const menuButton = document.querySelector('.mobile-menu-button');
   if (menuButton) menuButton.addEventListener('click', toggleMobileMenu);
@@ -1097,16 +1091,41 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const page = getPageFromPath();
   currentPage = page;
+  console.log('[main] Página identificada:', page);
 
   switch (page) {
-    case 'home': await loadHomePage(); break;
-    case 'team': await loadTeamPage(); break;
-    case 'equipment': await loadEquipmentPage(); break;
-    case 'publications': await loadPublicationsPage(); break;
-    case 'news': await loadNewsPage(); break;
-    case 'news-detail': await loadNewsDetailPage(); break;
-    case 'about': case 'terms': case 'privacy': case 'credits': break;
-    default: console.log('Página desconhecida:', page);
+    case 'home':
+      console.log('[main] 🏠 Carregando página HOME...');
+      await loadHomePage();
+      break;
+    case 'team':
+      console.log('[main] 👥 Carregando página TEAM...');
+      await loadTeamPage();
+      break;
+    case 'equipment':
+      console.log('[main] 🛠️ Carregando página EQUIPMENT...');
+      await loadEquipmentPage();
+      break;
+    case 'publications':
+      console.log('[main] 📚 Carregando página PUBLICATIONS...');
+      await loadPublicationsPage();
+      break;
+    case 'news':
+      console.log('[main] 📰 Carregando página NEWS...');
+      await loadNewsPage();
+      break;
+    case 'news-detail':
+      console.log('[main] 🔍 Carregando página NEWS-DETAIL...');
+      await loadNewsDetailPage();
+      break;
+    case 'about':
+    case 'terms':
+    case 'privacy':
+    case 'credits':
+      console.log('[main] ℹ️ Página institucional:', page);
+      break;
+    default:
+      console.log('[main] ⚠️ Página não reconhecida:', page);
   }
 
   initScrollReveal();
@@ -1114,5 +1133,5 @@ document.addEventListener('DOMContentLoaded', async () => {
   animateCounters();
 
   window.syncHeaderScrollState = syncHeaderScrollState;
-  console.log('Portal LATECE — carregado. Página:', page);
+  console.log('[main] ✅ Portal LATECE carregado. Página:', page);
 });
