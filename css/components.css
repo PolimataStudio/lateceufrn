@@ -1355,6 +1355,46 @@
   flex-wrap: wrap;
 }
 
+/**
+ * components.css — Sistema visual global do LATECE
+ * Versão 3.4 — Ajustes de margens e espaçamentos
+ */
+
+/* ============================================================
+   (conteúdo anterior permanece igual até a seção de cards)
+   ============================================================ */
+
+/* ============================================================
+   SEÇÕES E DECORAÇÕES — com ajustes de margem
+   ============================================================ */
+
+/* Card Nossa Missão - margens ampliadas */
+.mission-content {
+  margin-top: var(--space-10) !important;   /* anterior: var(--space-6) */
+  margin-bottom: var(--space-8) !important; /* anterior: var(--space-6) */
+}
+
+/* Título Últimas Notícias - margem superior */
+.featured-news .news-header {
+  margin-top: var(--space-8) !important; /* adicionado */
+}
+
+/* Título Acesso Rápido - margem superior */
+.quick-access .section-title {
+  margin-top: var(--space-8) !important; /* adicionado */
+}
+
+/* Cards de Acesso Rápido - margem inferior */
+.quick-access-grid {
+  margin-bottom: var(--space-8) !important; /* anterior: var(--space-4) */
+}
+
+/* Ajuste adicional para o título da seção da equipe */
+.team-members .section-title {
+  margin-top: var(--space-6);
+  margin-bottom: var(--space-4);
+}
+
 /* ============================================================
    5. MODAIS (refinados)
    ============================================================ */
