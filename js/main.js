@@ -269,9 +269,9 @@ function toggleTeamCard(card) {
   if (btn) {
     btn.setAttribute('aria-expanded', String(isExpanded));
     const icon = btn.querySelector('.icon');
-    const textNode = btn.childNodes[1];
+    const textSpan = btn.querySelector('.btn-text');
     if (icon) icon.textContent = isExpanded ? '▲' : '▼';
-    if (textNode) textNode.textContent = isExpanded ? ' Recolher' : ' Explorar';
+    if (textSpan) textSpan.textContent = isExpanded ? ' Recolher' : ' Explorar';
   }
   if (isExpanded) {
     const details = card.querySelector('.team-details');
@@ -280,6 +280,28 @@ function toggleTeamCard(card) {
       if (firstFocusable) setTimeout(() => firstFocusable.focus(), 200);
     }
   } else {
+    const btn = card.querySelector('.team-expand-btn');
+    if (btn) setTimeout(() => btn.focus(), 200);
+  }
+}
+function toggleTeamCard(card) {
+  const isExpanded = card.classList.toggle('expanded');
+  const btn = card.querySelector('.team-expand-btn');
+  if (btn) {
+    btn.setAttribute('aria-expanded', String(isExpanded));
+    const icon = btn.querySelector('.icon');
+    const textSpan = btn.querySelector('.btn-text');
+    if (icon) icon.textContent = isExpanded ? '▲' : '▼';
+    if (textSpan) textSpan.textContent = isExpanded ? ' Recolher' : ' Explorar';
+  }
+  if (isExpanded) {
+    const details = card.querySelector('.team-details');
+    if (details) {
+      const firstFocusable = details.querySelector('a, button');
+      if (firstFocusable) setTimeout(() => firstFocusable.focus(), 200);
+    }
+  } else {
+    const btn = card.querySelector('.team-expand-btn');
     if (btn) setTimeout(() => btn.focus(), 200);
   }
 }
