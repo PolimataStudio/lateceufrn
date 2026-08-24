@@ -121,6 +121,7 @@
     "search": "Buscar equipo...",
     "noResults": "No se encontraron equipos",
     "noResultsSubtitle": "Intente ajustar los filtros de búsqueda",
+    "clearFilters": "Limpiar Filtros",
     "categories": {
       "CAA": "Comunicación Aumentativa y Alternativa",
       "VidaDiaria": "Apoyo para la Vida Diaria y Práctica",
@@ -150,6 +151,7 @@
     "allYears": "Todos los Años",
     "search": "Buscar publicaciones...",
     "noResults": "No se encontraron publicaciones",
+    "clearFilters": "Limpiar Filtros",
     "types": {
       "article": "Artículo Científico",
       "tcc": "Trabajo de Fin de Grado",
