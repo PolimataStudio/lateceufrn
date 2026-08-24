@@ -121,6 +121,7 @@
     "search": "Buscar equipamento...",
     "noResults": "Nenhum equipamento encontrado",
     "noResultsSubtitle": "Tente ajustar os filtros de busca",
+    "clearFilters": "Limpar Filtros",
     "categories": {
       "CAA": "Comunicação Aumentativa e Alternativa",
       "VidaDiaria": "Auxílio para Vida Diária e Prática",
@@ -150,6 +151,7 @@
     "allYears": "Todos os Anos",
     "search": "Pesquisar publicações...",
     "noResults": "Nenhuma publicação encontrada",
+    "clearFilters": "Limpar Filtros",
     "types": {
       "article": "Artigo Científico",
       "tcc": "TCC",
