@@ -304,18 +304,26 @@ function toggleMobileMenu() {
   const menu = document.querySelector('.mobile-menu');
   const button = document.querySelector('.mobile-menu-button');
   const overlay = document.querySelector('.mobile-overlay');
-  if (menu) menu.classList.toggle('is-open', isMobileMenuOpen);
+
+  if (menu) {
+    menu.classList.toggle('is-open', isMobileMenuOpen);
+  }
   if (button) {
     button.classList.toggle('active', isMobileMenuOpen);
     button.setAttribute('aria-expanded', String(isMobileMenuOpen));
   }
-  if (overlay) overlay.classList.toggle('is-open', isMobileMenuOpen);
+  if (overlay) {
+    overlay.classList.toggle('is-open', isMobileMenuOpen);
+  }
+
   document.body.classList.toggle('menu-open', isMobileMenuOpen);
   document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
 }
 
 function closeMobileMenu() {
-  if (isMobileMenuOpen) toggleMobileMenu();
+  if (isMobileMenuOpen) {
+    toggleMobileMenu();
+  }
 }
 
 // ============================================
