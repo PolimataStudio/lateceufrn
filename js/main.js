@@ -31,8 +31,17 @@ let allPublications = [];
 function getPageFromPath() {
   const path = window.location.pathname;
   console.log('[main] getPageFromPath - pathname:', path);
-  const cleanPath = path.replace(/^\/public\//, '/');
-  if (cleanPath === '/' || cleanPath === '/index.html' || path === '/public/' || path === '/public/index.html') {
+  
+  // Remove o subdiretório /lateceufrn/ se presente, para normalizar
+  let cleanPath = path.replace(/^\/lateceufrn\//, '/');
+  // Se o path for exatamente /lateceufrn ou /lateceufrn/ (sem nada depois), normaliza para /
+  if (path === '/lateceufrn' || path === '/lateceufrn/') {
+    cleanPath = '/';
+  }
+  
+  console.log('[main] cleanPath:', cleanPath);
+  
+  if (cleanPath === '/' || cleanPath === '/index.html') {
     console.log('[main] Página identificada: home');
     return 'home';
   }
