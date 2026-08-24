@@ -6,6 +6,7 @@
     "equipment": "Equipment",
     "publications": "Publications",
     "news": "News",
+    "suggestions": "Suggestions",
     "admin": "Administration",
     "login": "Login",
     "logout": "Logout",
@@ -175,6 +176,54 @@
       "Lecture": "🎤 Lecture",
       "Research": "🔬 Research"
     }
+  },
+  "suggestions": {
+    "introTitle": "Why does your suggestion matter?",
+    "introText": "LATECE is a space built collectively. Your ideas help us improve our projects, research, equipment, and how we communicate assistive technology. Every contribution is a seed for a more inclusive future.",
+    "benefit1": {
+      "title": "Innovative ideas",
+      "desc": "New solutions for accessibility challenges."
+    },
+    "benefit2": {
+      "title": "Community participation",
+      "desc": "Collaborative construction of knowledge."
+    },
+    "benefit3": {
+      "title": "Accessibility in focus",
+      "desc": "Continuous improvements based on real experience."
+    },
+    "formTitle": "Send your suggestion",
+    "category": "Category",
+    "categoryPlaceholder": "Select a category",
+    "catAcessibilidade": "Accessibility",
+    "catTecnologia": "Assistive Technology",
+    "catPesquisa": "Research",
+    "catEnsino": "Teaching and Outreach",
+    "catEquipamentos": "Equipment",
+    "catWebsite": "Website and Communication",
+    "catOutro": "Other",
+    "title": "Suggestion title",
+    "titlePlaceholder": "Ex: Improvement in the search system",
+    "description": "Detailed description",
+    "descriptionPlaceholder": "Describe your idea, problem, or improvement...",
+    "impact": "Expected impact",
+    "impactPlaceholder": "Select the impact",
+    "impactLow": "Low (small improvement)",
+    "impactMedium": "Medium (significant improvement)",
+    "impactHigh": "High (relevant transformation)",
+    "accessibility": "Relationship with accessibility",
+    "accessibilityPlaceholder": "How does this suggestion contribute to accessibility? (optional)",
+    "email": "Your email (optional)",
+    "emailPlaceholder": "your@email.com",
+    "emailNote": "We will only use it to contact you about your suggestion, if necessary.",
+    "submit": "Send suggestion",
+    "successMessage": "✅ Your suggestion was sent successfully! We appreciate your contribution.",
+    "errorMessage": "An error occurred while sending. Please try again or contact us at latece@ufrn.br.",
+    "finalTitle": "What happens to your suggestion?",
+    "finalText": "All suggestions are read by the LATECE team. The best ideas are discussed in our meetings and may become projects, website improvements, or new features. Your participation is essential for us to grow together.",
+    "backHome": "Back to Home",
+    "about": "Learn about LATECE",
+    "required": "This field is required."
   },
   "admin": {
     "title": "Administration Panel",
