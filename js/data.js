@@ -1,69 +1,101 @@
 /**
- * data.js — Carregamento de dados (API com fallback para JSON)
- * Adicionada função genérica de paginação
+ * data.js — Carregamento de dados (apenas fallback local, sem API)
+ * Utiliza resolvePath para garantir caminhos corretos em qualquer subdiretório.
+ * Versão com logs de depuração para diagnóstico do carrossel.
  */
 
 /**
- * Carrega dados de um endpoint, com fallback para arquivo JSON local.
- * @param {string} endpoint - URL da API (ex: '/api/team')
- * @param {string} fallbackFile - Caminho do arquivo JSON local (ex: '/data/team.json')
- * @param {string} dataKey - Chave para extrair os dados (ex: 'members', 'items')
+ * Carrega dados de um arquivo JSON local.
+ * @param {string} file - Caminho do arquivo JSON (relativo à raiz do projeto)
+ * @param {string} dataKey - Chave para extrair os dados (opcional)
  * @returns {Promise<Array>} Array de dados
  */
-export async function loadData(endpoint, fallbackFile, dataKey = null) {
+async function loadLocalJSON(file, dataKey = null) {
   try {
-    const response = await fetch(endpoint);
-    if (response.ok) {
-      const data = await response.json();
-      if (dataKey && data[dataKey]) {
-        return data[dataKey];
-      }
-      if (Array.isArray(data)) {
-        return data;
-      }
-      for (const key of ['data', 'items', 'members', 'news', 'publications']) {
-        if (data[key] && Array.isArray(data[key])) {
-          return data[key];
-        }
-      }
-      console.warn(`[data] Nenhum array encontrado na resposta da API: ${endpoint}`);
-      return [];
+    // 1. Resolve o caminho usando BASE_PATH
+    const resolvedPath = window.resolvePath(file);
+    console.log(`[data] Tentando carregar: ${file} → resolvido para: ${resolvedPath}`);
+
+    // 2. Faz o fetch
+    const response = await fetch(resolvedPath);
+    console.log(`[data] Status da resposta: ${response.status} ${response.statusText}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status} - ${response.statusText}`);
     }
-    throw new Error(`HTTP ${response.status}`);
+
+    // 3. Parse do JSON
+    const data = await response.json();
+    console.log(`[data] Dados brutos carregados:`, data);
+
+    // 4. Extrai o array conforme a chave ou detecta automaticamente
+    if (dataKey && data[dataKey]) {
+      console.log(`[data] Usando chave "${dataKey}" → ${data[dataKey].length} itens`);
+      return data[dataKey];
+    }
+
+    if (Array.isArray(data)) {
+      console.log(`[data] Dados são um array direto → ${data.length} itens`);
+      return data;
+    }
+
+    // Tenta identificar automaticamente a chave que contém o array
+    const possibleKeys = ['items', 'members', 'news', 'publications', 'data', 'results'];
+    for (const key of possibleKeys) {
+      if (data[key] && Array.isArray(data[key])) {
+        console.log(`[data] Detectada chave "${key}" com ${data[key].length} itens`);
+        return data[key];
+      }
+    }
+
+    // Se não encontrar, retorna array vazio com aviso
+    console.warn(`[data] Nenhum array encontrado no arquivo ${file}. Estrutura:`, Object.keys(data));
+    return [];
   } catch (error) {
-    console.warn(`[data] Falha ao carregar da API (${endpoint}), usando fallback:`, error);
-    return loadFallback(fallbackFile, dataKey);
+    console.error(`[data] ❌ Erro ao carregar ${file}:`, error.message);
+    // Em caso de erro, retorna array vazio para não quebrar a UI
+    return [];
   }
 }
 
 /**
- * Carrega dados de um arquivo JSON local.
- * @param {string} file - Caminho do arquivo JSON
- * @param {string} dataKey - Chave para extrair os dados
- * @returns {Promise<Array>} Array de dados
+ * Carrega dados de membros da equipe.
  */
-async function loadFallback(file, dataKey = null) {
-  try {
-    const response = await fetch(file);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data = await response.json();
-    if (dataKey && data[dataKey]) {
-      return data[dataKey];
-    }
-    if (Array.isArray(data)) {
-      return data;
-    }
-    for (const key of ['items', 'members', 'news', 'publications', 'data']) {
-      if (data[key] && Array.isArray(data[key])) {
-        return data[key];
-      }
-    }
-    console.warn(`[data] Nenhum array encontrado no fallback: ${file}`);
-    return [];
-  } catch (error) {
-    console.error(`[data] Erro ao carregar fallback (${file}):`, error);
-    return [];
-  }
+export async function loadTeamData() {
+  console.log('[data] Carregando equipe...');
+  const result = await loadLocalJSON('data/team.json', 'members');
+  console.log(`[data] Equipe carregada: ${result.length} membros`);
+  return result;
+}
+
+/**
+ * Carrega dados de equipamentos.
+ */
+export async function loadEquipmentData() {
+  console.log('[data] Carregando equipamentos...');
+  const result = await loadLocalJSON('data/equipment.json', 'items');
+  console.log(`[data] Equipamentos carregados: ${result.length} itens`);
+  return result;
+}
+
+/**
+ * Carrega dados de publicações.
+ */
+export async function loadPublicationsData() {
+  console.log('[data] Carregando publicações...');
+  const result = await loadLocalJSON('data/publications.json', 'items');
+  console.log(`[data] Publicações carregadas: ${result.length} itens`);
+  return result;
+}
+
+/**
+ * Carrega notícias de fallback (usado pelo news.js e pelo carrossel da home).
+ */
+export async function loadNewsFallback() {
+  console.log('[data] Carregando notícias (fallback)...');
+  const result = await loadLocalJSON('data/news-fallback.json', 'items');
+  console.log(`[data] Notícias carregadas: ${result.length} itens`);
+  return result;
 }
 
 /**
@@ -76,11 +108,11 @@ async function loadFallback(file, dataKey = null) {
 export function paginateData(items, page, perPage = 10) {
   const total = items.length;
   const pages = Math.max(1, Math.ceil(total / perPage));
-  // Garantir que a página esteja dentro dos limites
   const currentPage = Math.max(1, Math.min(page, pages));
   const start = (currentPage - 1) * perPage;
   const end = Math.min(start + perPage, total);
   const paginatedItems = items.slice(start, end);
+
   return {
     items: paginatedItems,
     pagination: {
@@ -92,30 +124,14 @@ export function paginateData(items, page, perPage = 10) {
   };
 }
 
-/**
- * Carrega dados de membros da equipe.
- */
-export async function loadTeamData() {
-  return loadData('/api/team', './data/team.json', 'members');
-}
-
-/**
- * Carrega dados de equipamentos.
- */
-export async function loadEquipmentData() {
-  return loadData('/api/equipment', './data/equipment.json', 'items');
-}
-
-/**
- * Carrega dados de publicações.
- */
-export async function loadPublicationsData() {
-  return loadData('/api/publications', './data/publications.json', 'items');
-}
-
-/**
- * Carrega notícias de fallback.
- */
-export async function loadNewsFallback() {
-  return loadData('/api/news?limit=3', './data/news-fallback.json', 'items');
+// Para testes: expõe a função no console global
+if (typeof window !== 'undefined') {
+  window.__data = {
+    loadTeamData,
+    loadEquipmentData,
+    loadPublicationsData,
+    loadNewsFallback,
+    paginateData
+  };
+  console.log('[data] Funções exportadas disponíveis em window.__data para depuração.');
 }
