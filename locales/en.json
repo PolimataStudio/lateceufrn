@@ -121,6 +121,7 @@
     "search": "Search equipment...",
     "noResults": "No equipment found",
     "noResultsSubtitle": "Try adjusting the search filters",
+    "clearFilters": "Clear Filters",
     "categories": {
       "CAA": "Augmentative and Alternative Communication",
       "VidaDiaria": "Daily Living and Practical Aids",
@@ -150,6 +151,7 @@
     "allYears": "All Years",
     "search": "Search publications...",
     "noResults": "No publications found",
+    "clearFilters": "Clear Filters",
     "types": {
       "article": "Scientific Article",
       "tcc": "Final Project",
