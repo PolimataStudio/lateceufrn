@@ -1,6 +1,6 @@
 /**
  * main.js — Ponto de entrada do site público
- * Versão com logs detalhados para diagnosticar o carrossel.
+ * Versão com todas as correções e sem duplicações.
  */
 
 import { createHeader, createFooter, createNewsCard, createCarousel, createTeamCard, createEquipmentCard, createEquipmentModal, createPublicationItem, createPublicationModal, createNewsDetail, createPagination } from './components.js';
@@ -30,21 +30,11 @@ let allPublications = [];
 
 function getPageFromPath() {
   const path = window.location.pathname;
-  console.log('[main] getPageFromPath - pathname:', path);
-  
-  // Remove o subdiretório /lateceufrn/ se presente, para normalizar
   let cleanPath = path.replace(/^\/lateceufrn\//, '/');
-  // Se o path for exatamente /lateceufrn ou /lateceufrn/ (sem nada depois), normaliza para /
   if (path === '/lateceufrn' || path === '/lateceufrn/') {
     cleanPath = '/';
   }
-  
-  console.log('[main] cleanPath:', cleanPath);
-  
-  if (cleanPath === '/' || cleanPath === '/index.html') {
-    console.log('[main] Página identificada: home');
-    return 'home';
-  }
+  if (cleanPath === '/' || cleanPath === '/index.html') return 'home';
   if (cleanPath.includes('/team')) return 'team';
   if (cleanPath.includes('/equipment')) return 'equipment';
   if (cleanPath.includes('/publications')) return 'publications';
@@ -54,7 +44,6 @@ function getPageFromPath() {
   if (cleanPath.includes('/termos')) return 'terms';
   if (cleanPath.includes('/politica')) return 'privacy';
   if (cleanPath.includes('/creditos')) return 'credits';
-  console.log('[main] Página desconhecida:', cleanPath);
   return 'unknown';
 }
 
@@ -69,10 +58,8 @@ function debounce(fn, delay) {
 function updateListURL(listType, page) {
   const state = paginationState[listType];
   if (!state) return;
-  
   const params = new URLSearchParams();
   params.set('page', page);
-  
   if (listType === 'news') {
     if (state.filters.search) params.set('search', state.filters.search);
     if (state.filters.category) params.set('category', state.filters.category);
@@ -84,12 +71,9 @@ function updateListURL(listType, page) {
     if (state.filters.type) params.set('type', state.filters.type);
     if (state.filters.year) params.set('year', state.filters.year);
   }
-  
-  // CORREÇÃO: usar resolvePath para garantir o subdiretório
   const basePath = window.resolvePath(`${listType}.html`);
   const queryString = params.toString() ? '?' + params.toString() : '';
   const newUrl = basePath + queryString;
-  
   window.history.pushState({ page, listType, filters: state.filters }, '', newUrl);
 }
 
@@ -260,30 +244,9 @@ function initScrollReveal() {
 }
 
 // ============================================
-// EXPANSÃO DE CARDS DA EQUIPE
+// EXPANSÃO DE CARDS DA EQUIPE (CORRIGIDA)
 // ============================================
 
-function toggleTeamCard(card) {
-  const isExpanded = card.classList.toggle('expanded');
-  const btn = card.querySelector('.team-expand-btn');
-  if (btn) {
-    btn.setAttribute('aria-expanded', String(isExpanded));
-    const icon = btn.querySelector('.icon');
-    const textSpan = btn.querySelector('.btn-text');
-    if (icon) icon.textContent = isExpanded ? '▲' : '▼';
-    if (textSpan) textSpan.textContent = isExpanded ? ' Recolher' : ' Explorar';
-  }
-  if (isExpanded) {
-    const details = card.querySelector('.team-details');
-    if (details) {
-      const firstFocusable = details.querySelector('a, button');
-      if (firstFocusable) setTimeout(() => firstFocusable.focus(), 200);
-    }
-  } else {
-    const btn = card.querySelector('.team-expand-btn');
-    if (btn) setTimeout(() => btn.focus(), 200);
-  }
-}
 function toggleTeamCard(card) {
   const isExpanded = card.classList.toggle('expanded');
   const btn = card.querySelector('.team-expand-btn');
@@ -311,7 +274,6 @@ function setupTeamExpansion() {
   cards.forEach((card) => {
     const btn = card.querySelector('.team-expand-btn');
     if (!btn) return;
-    // Remove listeners antigos para evitar duplicação
     const newBtn = btn.cloneNode(true);
     btn.parentNode.replaceChild(newBtn, btn);
     const freshBtn = card.querySelector('.team-expand-btn');
@@ -361,33 +323,21 @@ function closeMobileMenu() {
 // ============================================
 
 async function loadHomePage() {
-  console.log('[main] loadHomePage() iniciou.');
   const container = document.getElementById('news-container');
   if (!container) {
-    console.error('[main] ❌ Elemento #news-container não encontrado no DOM!');
+    console.warn('[Home] #news-container não encontrado.');
     return;
   }
-  console.log('[main] Container #news-container encontrado:', container);
-
   try {
-    console.log('[main] Chamando fetchNews(1, {})...');
     const result = await fetchNews(1, {});
-    console.log('[main] Resultado de fetchNews:', result);
     const news = result.news || [];
-    console.log('[main] Notícias obtidas:', news.length, 'itens');
-
     if (news && news.length > 0) {
-      console.log('[main] Gerando carrossel com createCarousel()...');
-      const carouselHTML = createCarousel(news);
-      console.log('[main] HTML do carrossel gerado (tamanho):', carouselHTML.length);
-      container.innerHTML = carouselHTML;
-      console.log('[main] ✅ Carrossel inserido no container.');
+      container.innerHTML = createCarousel(news);
     } else {
-      console.warn('[main] ⚠️ Nenhuma notícia disponível para o carrossel.');
       container.innerHTML = `<p style="text-align:center;padding:2rem;color:var(--color-gray-500);">Nenhuma notícia disponível no momento.</p>`;
     }
   } catch (error) {
-    console.error('[main] ❌ Erro ao carregar notícias:', error);
+    console.error('[Home] Erro ao carregar notícias:', error);
     container.innerHTML = `<p style="text-align:center;padding:2rem;color:var(--color-gray-500);">Erro ao carregar notícias.</p>`;
   }
 }
@@ -404,7 +354,6 @@ async function loadTeamPage() {
   }
   try {
     const members = await loadTeamData();
-    console.log('[Team] Membros:', members);
     if (members && members.length > 0) {
       const groups = { coordinator: [], collaborator: [], researcher: [], student: [], technician: [] };
       members.forEach(m => {
@@ -473,8 +422,6 @@ async function loadEquipmentPage() {
     if (allEquipment.length === 0) {
       allEquipment = await loadEquipmentData();
     }
-    console.log('[Equipment] Total de itens:', allEquipment.length);
-
     let filtered = allEquipment;
     if (search) {
       const q = search.toLowerCase();
@@ -566,6 +513,19 @@ function setupEquipmentFilters() {
       loadEquipmentPage();
     });
   }
+
+  // Listener para o botão "Limpar filtros"
+  const clearBtn = document.getElementById('equipment-clear-filters');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', function() {
+      if (searchInput) searchInput.value = '';
+      if (categoryFilter) categoryFilter.value = '';
+      paginationState.equipment.filters = { search: '', category: '' };
+      paginationState.equipment.page = 1;
+      updateListURL('equipment', 1);
+      loadEquipmentPage();
+    });
+  }
 }
 
 function openEquipmentModal(item) {
@@ -623,8 +583,6 @@ async function loadPublicationsPage() {
     if (allPublications.length === 0) {
       allPublications = await loadPublicationsData();
     }
-    console.log('[Publications] Total de itens:', allPublications.length);
-
     let filtered = allPublications;
     if (search) {
       const q = search.toLowerCase();
@@ -737,6 +695,20 @@ function setupPublicationFilters() {
     yearFilter.addEventListener('change', () => {
       const year = yearFilter.value;
       paginationState.publications.filters.year = year;
+      paginationState.publications.page = 1;
+      updateListURL('publications', 1);
+      loadPublicationsPage();
+    });
+  }
+
+  // Listener para o botão "Limpar filtros"
+  const clearBtn = document.getElementById('publications-clear-filters');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', function() {
+      if (searchInput) searchInput.value = '';
+      if (typeFilter) typeFilter.value = '';
+      if (yearFilter) yearFilter.value = '';
+      paginationState.publications.filters = { search: '', type: '', year: '' };
       paginationState.publications.page = 1;
       updateListURL('publications', 1);
       loadPublicationsPage();
@@ -1011,17 +983,14 @@ function setupLanguageSelector() {
         </li>
       </ul>
     `;
-    // Adiciona eventos aos botões
     dropdown.querySelectorAll('.language-option').forEach(btn => {
       btn.addEventListener('click', async (e) => {
         const locale = btn.getAttribute('data-locale');
         if (locale && locale !== getLocale()) {
           await setLocale(locale);
-          // Atualiza o texto do botão principal
           toggle.querySelector('.flag').textContent = flags[locale] || '🌐';
           toggle.querySelector('.language-name').textContent = names[locale] || locale;
           renderDropdown();
-          // Recria header/footer
           const header = document.getElementById('main-header');
           const footer = document.getElementById('main-footer');
           if (header) {
@@ -1030,13 +999,11 @@ function setupLanguageSelector() {
             syncHeaderScrollState();
           }
           if (footer) footer.innerHTML = createFooter();
-          // Aplica traduções
           document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             const translation = t(key);
             if (translation !== key) el.textContent = translation;
           });
-          // Recarrega dados da página
           const page = getPageFromPath();
           if (page === 'team') loadTeamPage();
           else if (page === 'equipment') loadEquipmentPage();
@@ -1094,7 +1061,6 @@ function setupLanguageSelector() {
   window.addEventListener('scroll', () => { if (isOpen) positionDropdown(); });
   window.addEventListener('resize', () => { if (isOpen) positionDropdown(); });
 
-  // Atualiza o botão principal com o idioma atual
   const currentLocale = getLocale();
   const flags = { pt: '🇧🇷', en: '🇺🇸', es: '🇪🇸' };
   const names = { pt: 'Português', en: 'English', es: 'Español' };
@@ -1107,10 +1073,7 @@ function setupLanguageSelector() {
 // ============================================
 
 document.addEventListener('DOMContentLoaded', async () => {
-  console.log('[main] DOMContentLoaded iniciado.');
-  
   await initI18n();
-  console.log('[main] i18n inicializado. Idioma:', getLocale());
 
   const header = document.getElementById('main-header');
   const footer = document.getElementById('main-footer');
@@ -1118,16 +1081,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     header.innerHTML = createHeader(false);
     setActiveNavLink();
     syncHeaderScrollState();
-    console.log('[main] Header injetado.');
-  } else {
-    console.error('[main] ❌ #main-header não encontrado!');
   }
-  if (footer) {
-    footer.innerHTML = createFooter();
-    console.log('[main] Footer injetado.');
-  } else {
-    console.error('[main] ❌ #main-footer não encontrado!');
-  }
+  if (footer) footer.innerHTML = createFooter();
 
   const menuButton = document.querySelector('.mobile-menu-button');
   if (menuButton) menuButton.addEventListener('click', toggleMobileMenu);
@@ -1149,41 +1104,33 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const page = getPageFromPath();
   currentPage = page;
-  console.log('[main] Página identificada:', page);
 
   switch (page) {
     case 'home':
-      console.log('[main] 🏠 Carregando página HOME...');
       await loadHomePage();
       break;
     case 'team':
-      console.log('[main] 👥 Carregando página TEAM...');
       await loadTeamPage();
       break;
     case 'equipment':
-      console.log('[main] 🛠️ Carregando página EQUIPMENT...');
       await loadEquipmentPage();
       break;
     case 'publications':
-      console.log('[main] 📚 Carregando página PUBLICATIONS...');
       await loadPublicationsPage();
       break;
     case 'news':
-      console.log('[main] 📰 Carregando página NEWS...');
       await loadNewsPage();
       break;
     case 'news-detail':
-      console.log('[main] 🔍 Carregando página NEWS-DETAIL...');
       await loadNewsDetailPage();
       break;
     case 'about':
     case 'terms':
     case 'privacy':
     case 'credits':
-      console.log('[main] ℹ️ Página institucional:', page);
       break;
     default:
-      console.log('[main] ⚠️ Página não reconhecida:', page);
+      console.log('Página desconhecida:', page);
   }
 
   initScrollReveal();
@@ -1191,5 +1138,5 @@ document.addEventListener('DOMContentLoaded', async () => {
   animateCounters();
 
   window.syncHeaderScrollState = syncHeaderScrollState;
-  console.log('[main] ✅ Portal LATECE carregado. Página:', page);
+  console.log('Portal LATECE — carregado. Página:', page);
 });
