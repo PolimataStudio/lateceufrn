@@ -210,9 +210,12 @@
         <div class="container">
           <div class="form-container">
             <h2 class="form-title" data-i18n="suggestions.formTitle">Envie sua sugestão</h2>
-            <form id="suggestion-form" class="suggestion-form" action="https://formspree.io/f/SEU_ID" method="POST" novalidate>
-              <!-- Campo oculto para redirecionamento (opcional) -->
+            <form id="suggestion-form" class="suggestion-form" action="https://api.staticforms.dev/submit" method="POST" novalidate>
+              <!-- Campos ocultos obrigatórios da API Static Forms -->
+              <input type="hidden" name="apiKey" value="sf_3c5b8e60120c880ee6bcdb04">
               <input type="hidden" name="_redirect" value="https://latece.ufrn.br/sugestoes.html?success=true">
+              <!-- O campo _subject será preenchido via JavaScript com o título da sugestão -->
+              <input type="hidden" name="_subject" id="form-subject" value="Nova sugestão - LATECE">
 
               <div class="form-group">
                 <label for="suggestion-category" class="form-label" data-i18n="suggestions.category">Categoria</label>
@@ -237,7 +240,7 @@
 
               <div class="form-group">
                 <label for="suggestion-description" class="form-label" data-i18n="suggestions.description">Descrição detalhada</label>
-                <textarea id="suggestion-description" name="description" class="form-control" rows="5" placeholder="Descreva sua ideia, problema ou melhoria..." data-i18n-placeholder="suggestions.descriptionPlaceholder" required></textarea>
+                <textarea id="suggestion-description" name="message" class="form-control" rows="5" placeholder="Descreva sua ideia, problema ou melhoria..." data-i18n-placeholder="suggestions.descriptionPlaceholder" required></textarea>
                 <div class="error-message" id="description-error" data-i18n="suggestions.required">A descrição é obrigatória (mínimo 20 caracteres).</div>
               </div>
 
@@ -258,9 +261,10 @@
               </div>
 
               <div class="form-group">
-                <label for="suggestion-email" class="form-label" data-i18n="suggestions.email">Seu e-mail (opcional)</label>
-                <input type="email" id="suggestion-email" name="email" class="form-control" placeholder="seu@email.com" data-i18n-placeholder="suggestions.emailPlaceholder">
+                <label for="suggestion-email" class="form-label" data-i18n="suggestions.email">Seu e-mail (obrigatório)</label>
+                <input type="email" id="suggestion-email" name="email" class="form-control" placeholder="seu@email.com" data-i18n-placeholder="suggestions.emailPlaceholder" required>
                 <p style="font-size: var(--font-size-small); color: var(--color-text-muted); margin-top: var(--space-1);" data-i18n="suggestions.emailNote">Utilizaremos apenas para contato sobre sua sugestão, se necessário.</p>
+                <div class="error-message" id="email-error" style="display:none;" data-i18n="suggestions.required">Por favor, insira um e-mail válido.</div>
               </div>
 
               <div class="form-group" style="margin-top: var(--space-6);">
