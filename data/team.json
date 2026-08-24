@@ -326,6 +326,19 @@
       "area": "Interface e Experiência do Usuário (UX/UI)",
       "bio": "Artemisia atua no design de interfaces acessíveis e na experiência do usuário do portal, garantindo que seja intuitivo e inclusivo.",
       "projects": ["Portal LATECE", "Pesquisa em UX Inclusiva"]
+    },
+        {
+      "id": 28,
+      "name": "Marcone Arruda de Almeida",
+      "role": "student",
+      "roleLabel": "Bolsista de Iniciação Científica - FINEP, UERN",
+      "photoUrl": "assets/images/team/marcone.png",
+      "lattesUrl": "http://lattes.cnpq.br/9706042052182211",
+      "email": null,
+      "order": 25,
+      "area": "Interface e Experiência do Usuário (UX/UI)",
+      "bio": "Marcone atua na continuidade e manutenção do portal institucional do LATECE, com foco em acessibilidade e design inclusivo.",
+      "projects": ["Portal LATECE", "Pesquisa em UX Inclusiva"]
     }
   ]
 }
