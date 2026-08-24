@@ -1,6 +1,6 @@
 /**
  * main.js — Ponto de entrada do site público
- * Versão com todas as correções e sem duplicações.
+ * Versão com todas as correções, sem duplicações e com fallback para fechar menu.
  */
 
 import { createHeader, createFooter, createNewsCard, createCarousel, createTeamCard, createEquipmentCard, createEquipmentModal, createPublicationItem, createPublicationModal, createNewsDetail, createPagination } from './components.js';
@@ -991,29 +991,26 @@ function setupLanguageSelector() {
         </li>
       </ul>
     `;
-dropdown.querySelectorAll('.language-option').forEach(btn => {
-  btn.addEventListener('click', async (e) => {
-    const locale = btn.getAttribute('data-locale');
-    if (locale && locale !== getLocale()) {
-      await setLocale(locale);
-      // Atualiza o texto do botão principal
-      toggle.querySelector('.flag').textContent = flags[locale] || '🌐';
-      toggle.querySelector('.language-name').textContent = names[locale] || locale;
-      // Recria o dropdown para refletir o novo estado ativo
-      renderDropdown();
-      // Recarrega a página atual para atualizar dados (ex: categorias)
-      const page = getPageFromPath();
-      if (page === 'team') loadTeamPage();
-      else if (page === 'equipment') loadEquipmentPage();
-      else if (page === 'publications') loadPublicationsPage();
-      else if (page === 'news') loadNewsPage();
-      else if (page === 'news-detail') loadNewsDetailPage();
-      closeDropdown();
-    } else {
-      closeDropdown();
-    }
-  });
-  });
+    dropdown.querySelectorAll('.language-option').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        const locale = btn.getAttribute('data-locale');
+        if (locale && locale !== getLocale()) {
+          await setLocale(locale);
+          toggle.querySelector('.flag').textContent = flags[locale] || '🌐';
+          toggle.querySelector('.language-name').textContent = names[locale] || locale;
+          renderDropdown();
+          const page = getPageFromPath();
+          if (page === 'team') loadTeamPage();
+          else if (page === 'equipment') loadEquipmentPage();
+          else if (page === 'publications') loadPublicationsPage();
+          else if (page === 'news') loadNewsPage();
+          else if (page === 'news-detail') loadNewsDetailPage();
+          closeDropdown();
+        } else {
+          closeDropdown();
+        }
+      });
+    });
   }
 
   renderDropdown();
@@ -1070,13 +1067,82 @@ dropdown.querySelectorAll('.language-option').forEach(btn => {
 // INICIALIZAÇÃO
 // ============================================
 
-// Fallback: fechar o menu ao clicar fora dele (em qualquer lugar da página)
-document.addEventListener('click', function(e) {
-  if (isMobileMenuOpen) {
-    const menu = document.querySelector('.mobile-menu');
-    const button = document.querySelector('.mobile-menu-button');
-    if (menu && !menu.contains(e.target) && button && !button.contains(e.target)) {
-      closeMobileMenu();
-    }
+document.addEventListener('DOMContentLoaded', async () => {
+  await initI18n();
+
+  const header = document.getElementById('main-header');
+  const footer = document.getElementById('main-footer');
+  if (header) {
+    header.innerHTML = createHeader(false);
+    setActiveNavLink();
+    syncHeaderScrollState();
   }
+  if (footer) footer.innerHTML = createFooter();
+
+  const menuButton = document.querySelector('.mobile-menu-button');
+  if (menuButton) menuButton.addEventListener('click', toggleMobileMenu);
+  document.querySelectorAll('.mobile-nav-link').forEach(link => {
+    link.addEventListener('click', closeMobileMenu);
+  });
+  const overlay = document.querySelector('.mobile-overlay');
+  if (overlay) overlay.addEventListener('click', closeMobileMenu);
+
+  // Fallback: fechar o menu ao clicar fora dele (em qualquer lugar da página)
+  document.addEventListener('click', function(e) {
+    if (isMobileMenuOpen) {
+      const menu = document.querySelector('.mobile-menu');
+      const button = document.querySelector('.mobile-menu-button');
+      if (menu && !menu.contains(e.target) && button && !button.contains(e.target)) {
+        closeMobileMenu();
+      }
+    }
+  });
+
+  window.addEventListener('scroll', handleHeaderScroll, { passive: true });
+  syncHeaderScrollState();
+
+  setupLanguageSelector();
+  initAccessibility();
+
+  document.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => closeAccessibilityPanel());
+  });
+
+  const page = getPageFromPath();
+  currentPage = page;
+
+  switch (page) {
+    case 'home':
+      await loadHomePage();
+      break;
+    case 'team':
+      await loadTeamPage();
+      break;
+    case 'equipment':
+      await loadEquipmentPage();
+      break;
+    case 'publications':
+      await loadPublicationsPage();
+      break;
+    case 'news':
+      await loadNewsPage();
+      break;
+    case 'news-detail':
+      await loadNewsDetailPage();
+      break;
+    case 'about':
+    case 'terms':
+    case 'privacy':
+    case 'credits':
+      break;
+    default:
+      console.log('Página desconhecida:', page);
+  }
+
+  initScrollReveal();
+  createBackToTop();
+  animateCounters();
+
+  window.syncHeaderScrollState = syncHeaderScrollState;
+  console.log('Portal LATECE — carregado. Página:', page);
 });
