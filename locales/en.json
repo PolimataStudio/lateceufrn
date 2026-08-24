@@ -517,7 +517,7 @@
         "tableRows": [
           ["Access logs (IP, User-Agent)", "6 months", "Art. 15, Brazilian Civil Rights Framework for the Internet"],
           ["Error logs", "90 days", "Technical necessity"],
-          ["auth_token cookie", "24 hours (auto-expiration)", "Administrative session"
+          ["auth_token cookie", "24 hours (auto-expiration)", "Administrative session"]
         ]
       },
       "section10": {
