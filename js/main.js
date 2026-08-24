@@ -946,7 +946,6 @@ function setupLanguageSelector() {
   const toggle = document.getElementById('locale-toggle');
   if (!toggle) return;
 
-  // Cria o dropdown uma vez
   const dropdown = document.createElement('div');
   dropdown.className = 'language-dropdown';
   dropdown.id = 'locale-dropdown';
@@ -963,11 +962,10 @@ function setupLanguageSelector() {
   dropdown.style.overflow = 'hidden';
   document.body.appendChild(dropdown);
 
-  // Função para atualizar o conteúdo do dropdown baseado no idioma atual
   function renderDropdown() {
     const currentLocale = getLocale();
-    const flags = { pt: '🇧🇷', en: '🇺🇸' };
-    const names = { pt: 'Português', en: 'English' };
+    const flags = { pt: '🇧🇷', en: '🇺🇸', es: '🇪🇸' };
+    const names = { pt: 'Português', en: 'English', es: 'Español' };
     dropdown.innerHTML = `
       <ul class="language-list">
         <li>
@@ -982,6 +980,12 @@ function setupLanguageSelector() {
             <span>English</span>
           </button>
         </li>
+        <li>
+          <button class="language-option ${currentLocale === 'es' ? 'is-active' : ''}" data-locale="es" role="menuitem">
+            <span class="flag">🇪🇸</span>
+            <span>Español</span>
+          </button>
+        </li>
       </ul>
     `;
     // Adiciona eventos aos botões
@@ -993,9 +997,8 @@ function setupLanguageSelector() {
           // Atualiza o texto do botão principal
           toggle.querySelector('.flag').textContent = flags[locale] || '🌐';
           toggle.querySelector('.language-name').textContent = names[locale] || locale;
-          // Recria o dropdown para refletir o novo estado ativo
           renderDropdown();
-          // Recria header/footer para aplicar traduções nos menus
+          // Recria header/footer
           const header = document.getElementById('main-header');
           const footer = document.getElementById('main-footer');
           if (header) {
@@ -1004,13 +1007,13 @@ function setupLanguageSelector() {
             syncHeaderScrollState();
           }
           if (footer) footer.innerHTML = createFooter();
-          // Aplica traduções em elementos com data-i18n (já feito pelo setLocale, mas reforça)
+          // Aplica traduções
           document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             const translation = t(key);
             if (translation !== key) el.textContent = translation;
           });
-          // Recarrega a página atual para atualizar dados (ex: categorias)
+          // Recarrega dados da página
           const page = getPageFromPath();
           if (page === 'team') loadTeamPage();
           else if (page === 'equipment') loadEquipmentPage();
@@ -1025,7 +1028,6 @@ function setupLanguageSelector() {
     });
   }
 
-  // Renderiza o dropdown inicial
   renderDropdown();
 
   let isOpen = false;
@@ -1058,7 +1060,6 @@ function setupLanguageSelector() {
 
   toggle.addEventListener('click', toggleDropdown);
 
-  // Fecha ao clicar fora
   document.addEventListener('click', (e) => {
     if (isOpen && !e.target.closest('.language-selector') && !e.target.closest('#locale-dropdown')) {
       closeDropdown();
@@ -1070,10 +1071,10 @@ function setupLanguageSelector() {
   window.addEventListener('scroll', () => { if (isOpen) positionDropdown(); });
   window.addEventListener('resize', () => { if (isOpen) positionDropdown(); });
 
-  // Atualiza o texto do botão principal com o idioma atual
+  // Atualiza o botão principal com o idioma atual
   const currentLocale = getLocale();
-  const flags = { pt: '🇧🇷', en: '🇺🇸' };
-  const names = { pt: 'Português', en: 'English' };
+  const flags = { pt: '🇧🇷', en: '🇺🇸', es: '🇪🇸' };
+  const names = { pt: 'Português', en: 'English', es: 'Español' };
   toggle.querySelector('.flag').textContent = flags[currentLocale] || '🌐';
   toggle.querySelector('.language-name').textContent = names[currentLocale] || currentLocale;
 }
