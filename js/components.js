@@ -162,7 +162,6 @@ export function createFooter(locale) {
               <li><a href="./equipment.html" class="footer-link">Equipamentos</a></li>
               <li><a href="./publications.html" class="footer-link">Publicações</a></li>
               <li><a href="./news.html" class="footer-link">Notícias</a></li>
-              <li><a href="./creditos.html" class="footer-link">Créditos</a></li>
             </ul>
           </div>
 
