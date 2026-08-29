@@ -83,15 +83,43 @@ function updateListURL(listType, page) {
 
 function setActiveNavLink() {
   const currentPath = window.location.pathname;
-  const cleanPath = currentPath.replace(/^\/public\//, '/');
+  // Remove BASE_PATH se presente
+  const base = window.BASE_PATH || '';
+  let pathWithoutBase = currentPath;
+  if (base && currentPath.startsWith(base)) {
+    pathWithoutBase = currentPath.substring(base.length) || '/';
+  }
+  // Normaliza: remove barra inicial e final, e obtém o nome do arquivo
+  const normalize = (p) => {
+    let clean = p.replace(/^\/+/, '').replace(/\/+$/, '');
+    // Se estiver vazio, é a home
+    if (!clean) return 'index.html';
+    // Se termina com /, assume index.html
+    if (clean.endsWith('/')) clean += 'index.html';
+    // Extrai o nome do arquivo (última parte)
+    const parts = clean.split('/');
+    return parts[parts.length - 1] || 'index.html';
+  };
+  const currentFile = normalize(pathWithoutBase);
+
   const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
   navLinks.forEach(link => {
     const href = link.getAttribute('href');
     if (!href) return;
-    const cleanHref = href.replace(/^\/public\//, '/');
-    if (cleanHref === cleanPath || (cleanHref === '/' && cleanPath === '/')) {
-      link.classList.add('active');
-    } else if (cleanHref !== '/' && cleanPath.startsWith(cleanHref)) {
+    // Obtém o nome do arquivo do href
+    let hrefFile = href;
+    // Remove âncoras ou parâmetros
+    hrefFile = hrefFile.split('?')[0].split('#')[0];
+    // Se for './' ou vazio, é home
+    if (hrefFile === './' || hrefFile === '') hrefFile = 'index.html';
+    // Se não tiver extensão, assume .html (caso de links como '/about')
+    if (!hrefFile.includes('.') && hrefFile !== 'index.html') hrefFile += '.html';
+    // Extrai o nome do arquivo do href
+    const hrefParts = hrefFile.split('/');
+    const hrefFileOnly = hrefParts[hrefParts.length - 1] || 'index.html';
+
+    // Compara o nome do arquivo
+    if (hrefFileOnly === currentFile) {
       link.classList.add('active');
     } else {
       link.classList.remove('active');
