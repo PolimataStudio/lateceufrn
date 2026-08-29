@@ -132,11 +132,29 @@ function setActiveNavLink() {
 // ============================================
 
 function syncHeaderScrollState() {
-  const wrapper = document.querySelector('.header-wrapper');
-  const header = document.querySelector('.main-header');
+  const mainHeader = document.querySelector('.main-header');
+  const topBar = document.querySelector('.top-bar');
   const shouldBeScrolled = window.scrollY > 8;
-  if (wrapper) wrapper.classList.toggle('scrolled', shouldBeScrolled);
-  if (header) header.classList.toggle('scrolled', shouldBeScrolled);
+  const shouldHideTopBar = window.scrollY > 10; // limite para ocultar a top bar
+
+  // Atualiza a classe .scrolled na barra de menu (redução da logo)
+  if (mainHeader) {
+    mainHeader.classList.toggle('scrolled', shouldBeScrolled);
+    const menuHeight = mainHeader.offsetHeight;
+    document.documentElement.style.setProperty('--menu-height', menuHeight + 'px');
+  }
+
+  // Gerencia a top bar (altura e visibilidade)
+  if (topBar) {
+    const isVisible = window.getComputedStyle(topBar).display !== 'none';
+    const topBarHeight = isVisible ? topBar.offsetHeight : 0;
+    document.documentElement.style.setProperty('--topbar-height', topBarHeight + 'px');
+
+    // Oculta/mostra a top bar apenas se ela estiver visível (desktop)
+    if (isVisible) {
+      topBar.classList.toggle('hidden', shouldHideTopBar);
+    }
+  }
 }
 
 let headerScrollTicking = false;
@@ -1128,6 +1146,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   window.addEventListener('scroll', handleHeaderScroll, { passive: true });
   syncHeaderScrollState();
+
+  // Adiciona listeners para recalcular a altura do header em resize e load
+  window.addEventListener('resize', syncHeaderScrollState);
+  window.addEventListener('load', syncHeaderScrollState);
 
   setupLanguageSelector();
   initAccessibility();
