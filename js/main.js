@@ -409,29 +409,67 @@ async function loadTeamPage() {
   try {
     const members = await loadTeamData();
     if (members && members.length > 0) {
-      const groups = { coordinator: [], collaborator: [], researcher: [], student: [], technician: [] };
-      members.forEach(m => {
+      const sorted = [...members].sort((a, b) => (a.order || 999) - (b.order || 999));
+
+      const groups = {
+        coordinator: [],
+        technician: [],
+        student: [],
+        partner: [],
+        collaborator: [],
+        developer: []
+      };
+
+      sorted.forEach(m => {
         const role = m.role || 'collaborator';
         if (groups[role]) groups[role].push(m);
         else groups.collaborator.push(m);
       });
+
       const locale = getLocale();
       let html = '';
+
+      // Coordenação
       if (groups.coordinator.length > 0) {
         html += `<h2 class="section-title" data-i18n="team.coordinators">Coordenação</h2>`;
         html += `<div class="members-grid centered-grid">${groups.coordinator.map(m => createTeamCard(m, locale)).join('')}</div>`;
       }
-      const researchers = [...groups.researcher, ...groups.collaborator];
-      if (researchers.length > 0) {
-        html += `<h2 class="section-title" data-i18n="team.collaborators">Colaboradores</h2>`;
-        html += `<div class="members-grid">${researchers.map(m => createTeamCard(m, locale)).join('')}</div>`;
+
+      // Equipe Técnica e de Pesquisa
+      if (groups.technician.length > 0) {
+        html += `<h2 class="section-title">Equipe Técnica e de Pesquisa</h2>`;
+        html += `<div class="members-grid centered-grid">${groups.technician.map(m => createTeamCard(m, locale)).join('')}</div>`;
       }
+
+      // Bolsistas
       if (groups.student.length > 0) {
-        html += `<h2 class="section-title" data-i18n="team.developmentTeam">Equipe de Desenvolvimento</h2>`;
+        html += `<h2 class="section-title">Bolsistas</h2>`;
         html += `<div class="members-grid centered-grid">${groups.student.map(m => createTeamCard(m, locale)).join('')}</div>`;
       }
+
+      // Pesquisadores Parceiros
+      if (groups.partner.length > 0) {
+        html += `<h2 class="section-title">Pesquisadores Parceiros</h2>`;
+        html += `<p style="text-align:center;color:var(--text-secondary);margin-bottom:var(--space-4);">Pesquisadores que mantêm parcerias acadêmicas e científicas com o LATECE.</p>`;
+        html += `<div class="members-grid centered-grid">${groups.partner.map(m => createTeamCard(m, locale)).join('')}</div>`;
+      }
+
+      // Colaboradores
+      if (groups.collaborator.length > 0) {
+        html += `<h2 class="section-title">Colaboradores</h2>`;
+        html += `<p style="text-align:center;color:var(--text-secondary);margin-bottom:var(--space-4);">Docentes e pesquisadores que colaboram com atividades de ensino, pesquisa, extensão e formação desenvolvidas pelo LATECE.</p>`;
+        html += `<div class="members-grid centered-grid">${groups.collaborator.map(m => createTeamCard(m, locale)).join('')}</div>`;
+      }
+
+      // Desenvolvedores
+      if (groups.developer.length > 0) {
+        html += `<h2 class="section-title">Desenvolvedores</h2>`;
+        html += `<p style="text-align:center;color:var(--text-secondary);margin-bottom:var(--space-4);">Profissionais e pesquisadores que contribuem para o desenvolvimento de sistemas, recursos e soluções tecnológicas vinculadas aos projetos do LATECE.</p>`;
+        html += `<div class="members-grid centered-grid">${groups.developer.map(m => createTeamCard(m, locale)).join('')}</div>`;
+      }
+
       container.innerHTML = html;
-      setupTeamExpansion();
+
     } else {
       container.innerHTML = `
         <div class="empty-state">
