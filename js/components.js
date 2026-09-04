@@ -13,127 +13,124 @@ import { t, getLocale, setLocale } from './i18n.js';
 
 export function createHeader(isAuthenticated = false) {
   const locale = getLocale();
-  const flags = { pt: '🇧🇷', en: '🇺🇸' };
-  const languageNames = { pt: 'Português', en: 'English' };
+  const flags = { pt: '🇧🇷', en: '🇺🇸', es: '🇪🇸' };
+  const languageNames = { pt: 'Português', en: 'English', es: 'Español' };
   
   return `
-    <!-- WRAPPER STICKY (top bar + header) -->
-    <div class="header-wrapper">
-      <!-- TOP BAR -->
-      <div class="top-bar" role="banner" aria-label="Barra superior">
-        <div class="container top-bar-content">
-          <div class="contact-info">
-            <a href="mailto:latece@ufrn.br" class="info-link">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                <polyline points="22,6 12,13 2,6"/>
-              </svg>
-              <span>latece@ufrn.br</span>
-            </a>
-            <a href="tel:+558432150000" class="info-link">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.574 2.81.7A2 2 0 0 1 22 16.92z"/>
-              </svg>
-              <span>(84) 3342-2270</span>
-            </a>
-            <a href="https://www.instagram.com/latece_ufrn/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram do LATECE">
-              <img src="./assets/images/icons/instagram.png" alt="Instagram" class="social-icon" loading="lazy" onerror="this.style.display='none'">
-            </a>
-            <a href="https://www.youtube.com/channel/UCie5HHDcac4k2-7DaKWEuTQ" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="YouTube do LATECE">
-              <img src="./assets/images/icons/youtube.png" alt="YouTube" class="social-icon" loading="lazy" onerror="this.style.display='none'">
-            </a>
-          </div>
-          <div class="top-bar-right">
-            <div class="divider"></div>
-            <div class="user-links">
-              <div class="language-selector">
-                <button class="language-button" id="locale-toggle" aria-expanded="false" aria-haspopup="true">
-                  <span class="flag">${flags[locale] || '🌐'}</span>
-                  <span class="language-name">${languageNames[locale] || locale}</span>
-                  <span class="dropdown-arrow">▼</span>
-                </button>
-              </div>
+    <!-- TOP BAR — VISÍVEL EM DESKTOP -->
+    <div class="top-bar" role="banner" aria-label="Barra superior">
+      <div class="container top-bar-content">
+        <div class="contact-info">
+          <a href="mailto:latece@ufrn.br" class="info-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <span>latece@ufrn.br</span>
+          </a>
+          <a href="tel:+558432150000" class="info-link">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.574 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+            <span>(84) 3342-2270</span>
+          </a>
+          <a href="https://www.instagram.com/latece_ufrn/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram do LATECE">
+            <img src="./assets/images/icons/instagram.png" alt="Instagram" class="social-icon" loading="lazy" onerror="this.style.display='none'">
+          </a>
+          <a href="https://www.youtube.com/channel/UCie5HHDcac4k2-7DaKWEuTQ" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="YouTube do LATECE">
+            <img src="./assets/images/icons/youtube.png" alt="YouTube" class="social-icon" loading="lazy" onerror="this.style.display='none'">
+          </a>
+        </div>
+        <div class="top-bar-right">
+          <div class="divider"></div>
+          <div class="user-links">
+            <div class="language-selector">
+              <button class="language-button" id="locale-toggle" aria-expanded="false" aria-haspopup="true">
+                <span class="flag">${flags[locale] || '🌐'}</span>
+                <span class="language-name">${languageNames[locale] || locale}</span>
+                <span class="dropdown-arrow">▼</span>
+              </button>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- MAIN HEADER (sticky) -->
-      <header class="main-header" role="banner">
-        <div class="container">
-          <div class="header-content">
-            <!-- Logo -->
-            <a href="./" class="logo" aria-label="Página inicial do LATECE">
-              <div class="logo-icon">
-                <img src="./assets/images/logos/logo.png" alt="LATECE" loading="lazy" onerror="this.style.display='none'">
-              </div>
-            </a>
-
-            <!-- Desktop Navigation -->
-            <nav class="desktop-nav" aria-label="Navegação principal">
-              <ul class="nav-list">
-                <li><a href="./" class="nav-link" data-i18n="nav.home">Início</a></li>
-                <li><a href="./about.html" class="nav-link" data-i18n="nav.about">Sobre</a></li>
-                <li><a href="./team.html" class="nav-link" data-i18n="nav.team">Equipe</a></li>
-                <li><a href="./equipment.html" class="nav-link" data-i18n="nav.equipment">Equipamentos</a></li>
-                <li><a href="./publications.html" class="nav-link" data-i18n="nav.publications">Publicações</a></li>
-                <li><a href="./news.html" class="nav-link" data-i18n="nav.news">Notícias</a></li>
-                <li><a href="./sugestoes.html" class="nav-link" data-i18n="nav.suggestions">Sugestões</a></li>
-              </ul>
-            </nav>
-
-            <!-- User Section -->
-            <div class="user-section">
-              ${isAuthenticated ? `
-                <div class="user-menu-container">
-                  <button class="user-menu-button" aria-expanded="false" aria-haspopup="true">
-                    <div class="user-avatar"><span>AD</span></div>
-                    <div class="user-info">
-                      <div class="user-name">Administrador</div>
-                      <div class="user-role" data-i18n="nav.administrator">Administrador</div>
-                    </div>
-                    <span class="dropdown-arrow">▼</span>
-                  </button>
-                </div>
-              ` : `
-                <a href="./login.html" class="user-link" data-i18n="nav.login">Login</a>
-              `}
-            </div>
-
-            <!-- Mobile Menu Button -->
-            <button class="mobile-menu-button" aria-label="Menu" aria-expanded="false">
-              <span class="hamburger">
-                <span class="line"></span>
-                <span class="line"></span>
-                <span class="line"></span>
-              </span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div class="mobile-menu">
-          <div class="container">
-            <nav class="mobile-nav" aria-label="Menu mobile">
-              <a href="./" class="mobile-nav-link" data-i18n="nav.home">Início</a>
-              <a href="./about.html" class="mobile-nav-link" data-i18n="nav.about">Sobre</a>
-              <a href="./team.html" class="mobile-nav-link" data-i18n="nav.team">Equipe</a>
-              <a href="./equipment.html" class="mobile-nav-link" data-i18n="nav.equipment">Equipamentos</a>
-              <a href="./publications.html" class="mobile-nav-link" data-i18n="nav.publications">Publicações</a>
-              <a href="./news.html" class="mobile-nav-link" data-i18n="nav.news">Notícias</a>
-              <a href="./sugestoes.html" class="mobile-nav-link" data-i18n="nav.suggestions">Sugestões</a>
-              <div class="mobile-nav-divider"></div>
-              ${isAuthenticated ? `
-                <a href="./admin/" class="mobile-nav-link" data-i18n="nav.admin">Administração</a>
-                <button class="mobile-nav-link logout-btn" data-i18n="nav.logout">Sair</button>
-              ` : `
-                <a href="./login.html" class="mobile-nav-link" data-i18n="nav.login">Login</a>
-              `}
-            </nav>
-          </div>
-        </div>
-      </header>
     </div>
+
+    <!-- MAIN HEADER (BARRA DE MENU) — FIXA -->
+    <header class="main-header" role="banner">
+      <div class="container">
+        <div class="header-content">
+          <!-- Logo -->
+          <a href="./" class="logo" aria-label="Página inicial do LATECE">
+            <div class="logo-icon">
+              <img src="./assets/images/logos/logo.png" alt="LATECE" loading="lazy" onerror="this.style.display='none'">
+            </div>
+          </a>
+
+          <!-- Desktop Navigation -->
+          <nav class="desktop-nav" aria-label="Navegação principal">
+            <ul class="nav-list">
+              <li><a href="./" class="nav-link" data-i18n="nav.home">Início</a></li>
+              <li><a href="./about.html" class="nav-link" data-i18n="nav.about">Sobre</a></li>
+              <li><a href="./team.html" class="nav-link" data-i18n="nav.team">Equipe</a></li>
+              <li><a href="./equipment.html" class="nav-link" data-i18n="nav.equipment">Equipamentos</a></li>
+              <li><a href="./publications.html" class="nav-link" data-i18n="nav.publications">Publicações</a></li>
+              <li><a href="./news.html" class="nav-link" data-i18n="nav.news">Notícias</a></li>
+              <li><a href="./sugestoes.html" class="nav-link" data-i18n="nav.suggestions">Sugestões</a></li>
+            </ul>
+          </nav>
+
+          <!-- User Section -->
+          <div class="user-section">
+            ${isAuthenticated ? `
+              <div class="user-menu-container">
+                <button class="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                  <div class="user-avatar"><span>AD</span></div>
+                  <div class="user-info">
+                    <div class="user-name">Administrador</div>
+                    <div class="user-role" data-i18n="nav.administrator">Administrador</div>
+                  </div>
+                  <span class="dropdown-arrow">▼</span>
+                </button>
+              </div>
+            ` : `
+              <a href="./login.html" class="user-link" data-i18n="nav.login">Login</a>
+            `}
+          </div>
+
+          <!-- Mobile Menu Button -->
+          <button class="mobile-menu-button" aria-label="Menu" aria-expanded="false">
+            <span class="hamburger">
+              <span class="line"></span>
+              <span class="line"></span>
+              <span class="line"></span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div class="mobile-menu">
+        <div class="container">
+          <nav class="mobile-nav" aria-label="Menu mobile">
+            <a href="./" class="mobile-nav-link" data-i18n="nav.home">Início</a>
+            <a href="./about.html" class="mobile-nav-link" data-i18n="nav.about">Sobre</a>
+            <a href="./team.html" class="mobile-nav-link" data-i18n="nav.team">Equipe</a>
+            <a href="./equipment.html" class="mobile-nav-link" data-i18n="nav.equipment">Equipamentos</a>
+            <a href="./publications.html" class="mobile-nav-link" data-i18n="nav.publications">Publicações</a>
+            <a href="./news.html" class="mobile-nav-link" data-i18n="nav.news">Notícias</a>
+            <a href="./sugestoes.html" class="mobile-nav-link" data-i18n="nav.suggestions">Sugestões</a>
+            <div class="mobile-nav-divider"></div>
+            ${isAuthenticated ? `
+              <a href="./admin/" class="mobile-nav-link" data-i18n="nav.admin">Administração</a>
+              <button class="mobile-nav-link logout-btn" data-i18n="nav.logout">Sair</button>
+            ` : `
+              <a href="./login.html" class="mobile-nav-link" data-i18n="nav.login">Login</a>
+            `}
+          </nav>
+        </div>
+      </div>
+    </header>
   `;
 }
 
@@ -230,7 +227,7 @@ export function createFooter(locale) {
 // ============================================
 
 export function createTeamCard(member, locale = 'pt') {
-  const hasPhoto = member.photoUrl && member.photoUrl.trim() !== '';
+  const hasPhoto = member.showPhoto !== false && member.photoUrl && member.photoUrl.trim() !== '';
   const initials = member.name
     .split(' ')
     .filter(Boolean)
@@ -239,49 +236,24 @@ export function createTeamCard(member, locale = 'pt') {
     .toUpperCase()
     .slice(0, 2);
 
-  const photoHtml = hasPhoto
-    ? `<img src="./${member.photoUrl.replace(/^\//, '')}" alt="${member.name}" class="team-photo" loading="lazy">`
-    : `<div class="team-avatar-placeholder" style="background:var(--color-primary-gradient);color:white;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:bold;border-radius:50%;width:120px;height:120px;margin:0 auto;">${initials}</div>`;
-
-  const email = member.email ? `<a href="mailto:${member.email}" class="team-email">${member.email}</a>` : '';
-  const lattes = member.lattesUrl ? `<a href="${member.lattesUrl}" target="_blank" rel="noopener noreferrer" class="team-link" aria-label="${t('team.lattesLabel', { name: member.name })}">📄 Lattes</a>` : '';
-  const linkedin = member.linkedinUrl ? `<a href="${member.linkedinUrl}" target="_blank" rel="noopener noreferrer" class="team-link" aria-label="${t('team.linkedinLabel', { name: member.name })}">🔗 LinkedIn</a>` : '';
-
-  const area = member.area || '';
-  const bio = member.bio || '';
-  const projects = member.projects || [];
-  const hasDetails = area || bio || projects.length > 0;
-
-  let detailsHtml = '';
-  if (hasDetails) {
-    detailsHtml = `
-      <div class="team-details">
-        <div class="team-details-inner">
-          ${area ? `<p class="team-area"><strong>Área de atuação:</strong> ${area}</p>` : ''}
-          ${bio ? `<p class="team-bio">${bio}</p>` : ''}
-          ${projects.length > 0 ? `
-            <div class="team-projects">
-              <strong>Projetos:</strong>
-              <ul>
-                ${projects.map(p => `<li>${p}</li>`).join('')}
-              </ul>
-            </div>
-          ` : ''}
-          <div class="team-details-links">
-            ${lattes}
-            ${linkedin}
-            ${email}
-          </div>
-        </div>
+  // Foto ou placeholder
+  let photoHtml = '';
+  if (hasPhoto) {
+    photoHtml = `<img src="./${member.photoUrl.replace(/^\//, '')}" alt="${member.name}" class="team-photo" loading="lazy">`;
+  } else {
+    photoHtml = `
+      <div class="team-avatar-placeholder">
+        ${initials}
       </div>
     `;
   }
 
-  const expandBtn = hasDetails ? `
-    <button class="team-expand-btn" aria-expanded="false" aria-controls="details-${member.id}">
-      <span class="icon">▼</span> <span class="btn-text">Explorar</span>
-    </button>
-  ` : '';
+  // Ícone Lattes (sempre visível, com link se houver URL)
+  const lattesIconHtml = member.lattesUrl
+    ? `<a href="${member.lattesUrl}" target="_blank" rel="noopener noreferrer" class="team-lattes-link" aria-label="Currículo Lattes de ${member.name}">
+         <img src="./assets/images/icons/lattes.png" alt="Lattes" class="team-lattes-icon">
+       </a>`
+    : `<img src="./assets/images/icons/lattes.png" alt="Lattes" class="team-lattes-icon">`;
 
   return `
     <div class="team-card" data-id="${member.id}">
@@ -289,8 +261,11 @@ export function createTeamCard(member, locale = 'pt') {
       <div class="team-info">
         <h3 class="team-name">${member.name}</h3>
         <p class="team-role">${member.roleLabel || member.role}</p>
-        ${expandBtn}
-        ${detailsHtml}
+        <hr class="team-divider">
+        <p class="team-institution">${member.institution || ''}</p>
+        <div class="team-lattes-wrapper">
+          ${lattesIconHtml}
+        </div>
       </div>
     </div>
   `;
